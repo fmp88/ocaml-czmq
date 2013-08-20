@@ -1,0 +1,5 @@
+(* OASIS_START *)
+(* DO NOT EDIT (digest: 1064418d7f7d2fa61224429594bfe6dc) *)
+Authors of Zmq
+Florian Pichlmeier
+(* OASIS_STOP *)

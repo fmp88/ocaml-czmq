@@ -1,0 +1,12 @@
+# OASIS_START
+# DO NOT EDIT (digest: 99ed56ad70d02560cd85e87087b3cc18)
+version = "0.1.0"
+description = "OCaml binding for Zeromq 3.3"
+requires = "ctypes.foreign"
+archive(byte) = "Zmq.cma"
+archive(byte, plugin) = "Zmq.cma"
+archive(native) = "Zmq.cmxa"
+archive(native, plugin) = "Zmq.cmxs"
+exists_if = "Zmq.cma"
+# OASIS_STOP
+
