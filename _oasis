@@ -1,5 +1,5 @@
 OASISFormat: 0.3
-Name:        Zmq
+Name:        zmq
 Version:     0.1.0
 Synopsis:    OCaml binding for Zeromq 3.3
 Authors:     Florian Pichlmeier
@@ -9,10 +9,13 @@ Plugins:     META (0.3), StdFiles (0.3), DevFiles (0.3)
 BuildDepends:
   ctypes.foreign
 
-Library "Zmq"
+PreInstallCommand: cc -shared -o _build/src/dllzmq_stubs.so -lzmq
+
+Library "zmq"
   Path:       src
   BuildTools: ocamlbuild
   Modules:    Zmq
+  CSources:   zmq.c
   CCOpt:      -Wl,--no-as-needed
   CCLib:      -lzmq
-  
+  DllLib:     -lzmq_stubs
