@@ -28,7 +28,7 @@ module Socket = struct
     let create = foreign "zmq_ctx_new" (void @-> returning (ptr void))
 
     let destroy ctx = 
-      let destroy_stub = foreign "zmq_ctx_destroy" (ptr void @-> returning int)
+      let destroy_stub = foreign "zmq_ctx_term" (ptr void @-> returning int)
       in
       match destroy_stub ctx with
       | 0 -> ()
