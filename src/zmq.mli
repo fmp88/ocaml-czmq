@@ -13,8 +13,8 @@ module Socket : sig
 
     (* Create & Destroy *)
     val create : unit -> t
-(*  val destroy : t -> unit 
-
+    val destroy : t -> unit 
+(*
     (* Setter *)
     val set_io_threads : t -> int -> unit 
     val set_max_sockets : t -> int -> unit 

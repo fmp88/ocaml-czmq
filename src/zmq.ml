@@ -2,6 +2,8 @@ open Ctypes
 open PosixTypes
 open Foreign
 
+exception General_Error
+
 let zmq_version_stub = foreign "zmq_version" (ptr int @-> ptr int @-> ptr int @-> returning void)
 
 let version () = 
@@ -24,6 +26,13 @@ module Socket = struct
     type t = unit ptr
  
     let create = foreign "zmq_ctx_new" (void @-> returning (ptr void))
+
+    let destroy ctx = 
+      let destroy_stub = foreign "zmq_ctx_destroy" (ptr void @-> returning int)
+      in
+      match destroy_stub ctx with
+      | 0 -> ()
+      | _ -> raise General_Error
 
   end
 
