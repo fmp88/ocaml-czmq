@@ -14,17 +14,17 @@ module Socket : sig
     (* Create & Destroy *)
     val create : unit -> t
     val destroy : t -> unit 
-(*
+  
     (* Setter *)
     val set_io_threads : t -> int -> unit 
     val set_max_sockets : t -> int -> unit 
     val set_ipv6 : t -> bool -> unit 
-
+  
     (* Getter *)
     val get_io_threads : t -> int
     val get_max_sockets : t -> int
     val get_ipv6 : t -> bool
-*)
+  
   end
 
 end
