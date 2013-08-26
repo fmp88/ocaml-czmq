@@ -15,12 +15,12 @@ let version () =
    
 
 module Socket = struct
-(*
+
   type 'kind t = unit ptr
  
   type kind = Req | Rep | Dealer | Router | Pub | Sub | XPub | XSub |
               Push | Pull | Pair 
-*)
+
   module Context = struct
 
     type t = unit ptr
@@ -78,6 +78,30 @@ module Socket = struct
       | x -> true
 
   end
+
+  let create ctx kind = 
+    let create_stub = foreign "zmq_socket" (ptr void @-> int @-> returning (ptr void))
+    in
+    let c_kind = match kind with
+    | ZMQ_PAIR -> 0
+    | ZMQ_PUB -> 1
+    | ZMQ_SUB -> 2
+    | ZMQ_REQ -> 3
+    | ZMQ_REP -> 4
+    | ZMQ_DEALER -> 5
+    | ZMQ_ROUTER -> 6
+    | ZMQ_PULL -> 7
+    | ZMQ_PUSH -> 8
+    | ZMQ_XPUB -> 9
+    | ZMQ_XSUB -> 10
+    in
+    create_stub ctx c_kind
+
+  let close ctx = 
+    let close_stub = foreign "zmq_close" (ptr void @-> returning int) in
+    match close_stub ctx with
+    | 0 -> ()
+    | _ -> raise General_Error
 
 end
 

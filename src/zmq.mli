@@ -1,12 +1,12 @@
 val version : unit -> int * int * int
 
 module Socket : sig
- (*  
+   
   type 'a t
 
   type kind = Req | Rep | Dealer | Router | Pub | Sub | XPub | XSub |
               Push | Pull | Pair 
-*)
+
   module Context : sig
   
     type t 
@@ -27,11 +27,11 @@ module Socket : sig
   
   end
 
-end
-(*
   val create : Context.t -> kind -> kind t
   val close : kind t -> unit
 
+end
+(*
   val bind : kind t -> string -> unit
   val unbind : kind t -> string -> unit
 
