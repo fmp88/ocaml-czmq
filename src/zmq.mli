@@ -30,8 +30,6 @@ module Socket : sig
   val create : Context.t -> kind -> kind t
   val close : kind t -> unit
 
-end
-(*
   val bind : kind t -> string -> unit
   val unbind : kind t -> string -> unit
 
@@ -43,4 +41,3 @@ end
   end
 
 end
-*)

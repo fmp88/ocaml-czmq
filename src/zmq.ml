@@ -83,17 +83,17 @@ module Socket = struct
     let create_stub = foreign "zmq_socket" (ptr void @-> int @-> returning (ptr void))
     in
     let c_kind = match kind with
-    | ZMQ_PAIR -> 0
-    | ZMQ_PUB -> 1
-    | ZMQ_SUB -> 2
-    | ZMQ_REQ -> 3
-    | ZMQ_REP -> 4
-    | ZMQ_DEALER -> 5
-    | ZMQ_ROUTER -> 6
-    | ZMQ_PULL -> 7
-    | ZMQ_PUSH -> 8
-    | ZMQ_XPUB -> 9
-    | ZMQ_XSUB -> 10
+    | Pair -> 0
+    | Pub -> 1
+    | Sub -> 2
+    | Req -> 3
+    | Rep -> 4
+    | Dealer -> 5
+    | Router -> 6
+    | Pull -> 7
+    | Push -> 8
+    | XPub -> 9
+    | XSub -> 10
     in
     create_stub ctx c_kind
 
@@ -102,6 +102,37 @@ module Socket = struct
     match close_stub ctx with
     | 0 -> ()
     | _ -> raise General_Error
+
+  let bind ctx name = 
+    let bind_stub = foreign "zmq_bind" (ptr void @-> string @-> returning int) in
+    match bind_stub ctx name with 
+    | 0 -> ()
+    | _ -> raise General_Error
+
+  let unbind ctx name = 
+    let unbind_stub = foreign "zmq_unbind" (ptr void @-> string @-> returning int)
+    in
+    match unbind_stub ctx name with
+    | 0 -> ()
+    | _ -> raise General_Error
+
+  let connect ctx name = 
+    let connect_stub = foreign "zmq_connect" (ptr void @-> string @-> returning int)
+    in
+    match connect_stub ctx name with
+    | 0 -> ()
+    | _ -> raise General_Error
+
+  let disconnect ctx name = 
+    let disconnect_stub = foreign "zmq_disconnect" (ptr void @-> string @-> returning int)
+    in
+    match disconnect_stub ctx name with
+    | 0 -> ()
+    | _ -> raise General_Error
+
+  module Options = struct 
+ 
+  end
 
 end
 
