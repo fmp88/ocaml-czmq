@@ -7,7 +7,8 @@ License:     BSD3
 Plugins:     META (0.3), StdFiles (0.3), DevFiles (0.3)
 
 BuildDepends:
-  ctypes.foreign
+  ctypes.foreign,
+  threads
 
 PreInstallCommand: cc -shared -o _build/src/dllzmq_stubs.so -lzmq
 
@@ -16,6 +17,5 @@ Library "zmq"
   BuildTools: ocamlbuild
   Modules:    Zmq
   CSources:   zmq.c
-  CCOpt:      -Wl,--no-as-needed
-  CCLib:      -lzmq
+  CCLib:      -Wl,-no-as-needed -lzmq
   DllLib:     -lzmq_stubs
