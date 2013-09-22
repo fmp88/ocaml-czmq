@@ -10,14 +10,20 @@ module Context : sig
 
   (* Setter *)
   val set_io_threads : t -> int -> unit 
+  val set_linger : t -> int -> unit
+  val set_pipehwm : t -> int -> unit
+  val set_sndhwm : t -> int -> unit
+  val set_rcvhwm : t -> int -> unit
+(*
   val set_max_sockets : t -> int -> unit 
   val set_ipv6 : t -> bool -> unit 
-
+*)
+(*
   (* Getter *)
   val get_io_threads : t -> int
   val get_max_sockets : t -> int
   val get_ipv6 : t -> bool
-
+*)
 end
 
 module Socket : sig
@@ -28,7 +34,7 @@ module Socket : sig
                `Push | `Pull | `Pair]
 
   val create : Context.t -> kind -> kind t
-  val close : kind t -> unit
+  val destroy : Context.t -> kind t -> unit
 
   val bind : kind t -> string -> unit
   val unbind : kind t -> string -> unit
@@ -65,3 +71,66 @@ module Options : sig
   
 end
 
+module Clock : sig
+
+  val sleep : int -> unit
+
+  val time : unit -> int64
+
+  val log : string -> unit
+
+  val timestr : unit -> string
+
+end
+
+module Cert : sig
+ 
+  type t
+  
+  val create : unit -> t
+
+end
+
+module Certstore : sig
+ 
+  type t
+
+  val create : string -> t
+
+  val lookup : t -> string -> Cert.t
+
+  val dump : t -> unit
+
+end
+
+module Auth : sig
+
+  type t 
+
+  val create : Context.t -> t
+
+  val allow : Context.t -> string -> unit
+
+  val deny : Context.t -> string -> unit
+
+  val configure_plain : Context.t -> string -> string -> unit
+
+  val configure_curve : Context.t -> string -> string -> unit
+
+end
+
+module Beacon : sig
+
+  type t
+
+  val create : int -> t
+
+  val hostname : t -> string
+
+  val set_interval : t -> int -> unit
+
+  val noecho : t -> unit
+
+  val silence : t -> unit 
+
+end

@@ -5,37 +5,74 @@ open Unsigned
 
 exception General_Error of string
 
-let zmq_version_stub = foreign "zmq_version" (ptr int @-> ptr int @-> ptr int @-> returning void)
-
 let version () = 
+  let zmq_version_stub = foreign "zmq_version" 
+    (ptr int @-> ptr int @-> ptr int @-> returning void)
+  in
   let major = allocate int 0 in
   let minor = allocate int 0 in
   let patch = allocate int 0 in
   zmq_version_stub major minor patch;
   (!@major,!@minor,!@patch)
+
+type zctx_t
+let _zctx_t : zctx_t structure typ = structure "_zctx_t"
    
+type zcertstore_t
+let _zcertstore_t : zcertstore_t structure typ = structure "_zcertstore_t"
+
+type zcert_t
+let _zcert_t : zcert_t structure typ = structure "_zcert_t"
+
+type zauth_t
+let _zauth_t : zauth_t structure typ = structure "_zauth_t"
+
+type zbeacon_t
+let _zbeacon_t : zbeacon_t structure typ = structure "_zbeacon_t"
+
 module Context = struct
 
-  type t = unit ptr
- 
-  let create = foreign "zmq_ctx_new" 
-    (void @-> returning_checking_errno (ptr void))
+(*type t = unit ptr*)
+  type t = zctx_t Ctypes.structure Ctypes.ptr 
 
-  let destroy ctx = 
-    let destroy_stub = foreign "zmq_ctx_term" 
-      (ptr void @-> returning_checking_errno int)
+  let create = foreign "zctx_new" 
+    (void @-> returning (ptr _zctx_t))
+
+  let destroy = 
+    let destroy_stub = foreign "zctx_destroy" 
+      (ptr _zctx_t @-> returning void)
+    in destroy_stub
+
+  let set_io_threads =
+    let set_stub = foreign "zctx_set_iothreads" 
+      (ptr _zctx_t @-> int @-> returning void)
     in
-    match destroy_stub ctx with
-    | 0 -> ()
-    | _ -> raise (General_Error "Destroy context")
-
-  let set_stub = foreign "zmq_ctx_set" (ptr void @-> int @-> int @-> returning int)
-  let set_io_threads ctx nr =
-    let zmq_io_threads = 1 in
-    match set_stub ctx zmq_io_threads nr with
-    | 0 -> ()
-    | _ -> raise (General_Error "Set io threads for context")
+    set_stub
     
+  let set_linger =
+    let set_stub = foreign "zctx_set_linger" 
+      (ptr _zctx_t @-> int @-> returning void)
+    in
+    set_stub
+    
+  let set_pipehwm =
+    let set_stub = foreign "zctx_set_pipehwm" 
+      (ptr _zctx_t @-> int @-> returning void)
+    in
+    set_stub
+    
+  let set_sndhwm =
+    let set_stub = foreign "zctx_set_sndhwm" 
+      (ptr _zctx_t @-> int @-> returning void)
+    in
+    set_stub
+    
+  let set_rcvhwm =
+    let set_stub = foreign "zctx_set_rcvhwm" 
+      (ptr _zctx_t @-> int @-> returning void)
+    in
+    set_stub
+(*
   let set_max_sockets ctx nr =
     let zmq_max_sockets = 2 in
     match set_stub ctx zmq_max_sockets nr with
@@ -51,7 +88,7 @@ module Context = struct
     match set_stub ctx zmq_set_ipv6 c_flag with
     | 0 -> ()
     | _ -> raise (General_Error "Set ipv6 for context")
-    
+  
   let get_stub = foreign "zmq_ctx_get" (ptr void @-> int @-> returning int)
   let get_io_threads ctx =
     let zmq_io_threads = 1 in
@@ -71,7 +108,7 @@ module Context = struct
     | x when x < 0 -> raise (General_Error "Get ipv6 of context")
     | 0 -> false
     | x -> true
-
+*)
 end
 
 
@@ -83,8 +120,8 @@ module Socket = struct
                `Push | `Pull | `Pair]
 
   let create ctx kind = 
-    let create_stub = foreign "zmq_socket" 
-      (ptr void @-> int @-> returning_checking_errno (ptr void))
+    let create_stub = foreign "zsocket_new" 
+      (ptr _zctx_t @-> int @-> returning (ptr void))
     in
     let c_kind = match kind with
     | `Pair -> 0
@@ -101,48 +138,40 @@ module Socket = struct
     in
     create_stub ctx c_kind
 
-  let close ctx = 
-    let close_stub = foreign "zmq_close" (ptr void @-> returning int) in
-    match close_stub ctx with
-    | 0 -> ()
-    | _ -> raise (General_Error "Close socket")
+  let destroy = 
+    let destroy_stub = foreign "zsocket_destroy" 
+      (ptr _zctx_t @-> ptr void @-> returning void) 
+    in
+    destroy_stub
 
   let bind ctx name = 
-    let bind_stub = foreign "zmq_bind" (ptr void @-> string @-> returning int) in
+    let bind_stub = foreign "zsocket_bind" (ptr void @-> string @-> returning int) in
     match bind_stub ctx name with 
     | 0 -> ()
     | _ -> raise (General_Error "Bind socket")
 
   let unbind ctx name = 
-    let unbind_stub = foreign "zmq_unbind" (ptr void @-> string @-> returning int)
+    let unbind_stub = foreign "zsocket_unbind" (ptr void @-> string @-> returning int)
     in
     match unbind_stub ctx name with
     | 0 -> ()
     | _ -> raise (General_Error "Unbind socket")
 
   let connect ctx name = 
-    let connect_stub = foreign "zmq_connect" (ptr void @-> string @-> returning int)
+    let connect_stub = foreign "zsocket_connect" (ptr void @-> string @-> returning int)
     in
     match connect_stub ctx name with
     | 0 -> ()
     | _ -> raise (General_Error "Connect socket")
 
   let disconnect ctx name = 
-    let disconnect_stub = foreign "zmq_disconnect" (ptr void @-> string @-> returning int)
+    let disconnect_stub = foreign "zsocket_disconnect" 
+      (ptr void @-> string @-> returning int)
     in
     match disconnect_stub ctx name with
     | 0 -> ()
     | _ -> raise (General_Error "Disconnect socket")
 
-  type msg_t 
-  let msg_t : msg_t structure typ = structure "zmq_msg_t"
-  let _ = msg_t *:* (array 32 uchar)
-  let () = seal msg_t
-
-  let msg_close_stub = foreign "zmq_msg_close" (ptr msg_t @-> returning int)
-  let msg_data_stub = foreign "zmq_msg_data"
-      (ptr msg_t @-> returning string)
- 
   type snd_flag = None | Dontwait | Sndmore | Dontwait_Sndmore
   let send socket ?flag:(flag=None) m = 
     let c_flag = match flag with
@@ -151,24 +180,13 @@ module Socket = struct
     | Sndmore -> 2
     | Dontwait_Sndmore-> 42
     in
-    let send_stub = foreign "zmq_msg_send" 
-      (ptr msg_t @-> ptr void @->int @-> returning int)
+    let send_stub = foreign "zsocket_sendmem" 
+      (ptr void @-> string @-> size_t @-> int @-> returning int)
     in
-    let msg = make msg_t in
     let msg_size = Size_t.of_int (String.length m) in
-    let msg_init_size_stub = foreign "zmq_msg_init_size" 
-      ( ptr msg_t @-> size_t @-> returning_checking_errno int) 
-    in
-    msg_init_size_stub (addr msg) msg_size;
-    let msg_content = msg_data_stub (addr msg) in
-    let memcpy_stub = foreign "memcpy" 
-      (string @-> string @-> size_t @-> returning_checking_errno void)
-    in
-    memcpy_stub msg_content m msg_size;
-    print_endline msg_content;
-    match send_stub (addr msg) socket c_flag with
+    match send_stub socket m msg_size c_flag with
     | -1 -> raise (General_Error "Send socket")
-    | _ -> print_endline (msg_data_stub (addr msg));()
+    | _ -> ()
 
   type recv_flag = None | Dontwait
   let recv ?flag:(flag=None) socket =
@@ -176,17 +194,10 @@ module Socket = struct
     | None -> 0
     | Dontwait -> 1
     in
-    let recv_stub = foreign "zmq_msg_recv" 
-      (ptr (msg_t : msg_t structure typ) @-> ptr void @-> int @-> returning int)
+    let recv_stub = foreign "zstr_recv" 
+      (ptr void @-> returning string)
     in
-    let msg_buffer = make msg_t in
-    let msg_init_stub = foreign "zmq_msg_init" 
-      (ptr ( msg_t : msg_t structure typ) @-> returning_checking_errno int) 
-    in
-    msg_init_stub (addr msg_buffer);
-    match recv_stub (addr msg_buffer) socket c_flag with
-    | -1 -> raise (General_Error "Receive socket")
-    | _ -> msg_data_stub (addr msg_buffer)
+    recv_stub socket
   
 end
 
@@ -238,3 +249,95 @@ module Options = struct
  
 end
 
+module Clock = struct
+
+  let sleep = foreign "zclock_sleep"
+    (int @-> returning void)
+
+  let time = foreign "zclock_time"
+    (void @-> returning int64_t)
+
+  let log = foreign "zclock_log"
+    (string @-> returning void)
+
+  let timestr = foreign "zclock_timestr" 
+    (void @-> returning string)
+
+end
+
+module Cert = struct
+
+  type t = zcert_t Ctypes.structure Ctypes.ptr 
+
+  let create = foreign "zcert_new"
+    (void @-> returning (ptr _zcert_t))
+
+end
+
+module Certstore = struct
+ 
+  type t = zcertstore_t Ctypes.structure Ctypes.ptr 
+
+  let create = foreign "zcertstore_new"
+    (string @-> returning (ptr _zcertstore_t))
+(*
+  let destroy = foreign
+*)
+  let lookup = foreign "zcertstore_lookup"
+    ((ptr _zcertstore_t) @-> string @-> returning (ptr _zcert_t))
+(*  
+  let insert = foreign "zcertstore_insert"
+    (
+*)
+  let dump = foreign "zcertstore_dump"
+    ((ptr _zcertstore_t) @-> returning void)
+
+end
+
+module Auth = struct
+
+  type t = zauth_t Ctypes.structure Ctypes.ptr 
+
+  let create = foreign "zauth_new"
+    ((ptr _zctx_t) @-> returning (ptr _zauth_t))
+  
+  let allow = foreign "zauth_allow"
+    ((ptr _zctx_t) @-> string @-> returning void)
+
+  let deny = foreign "zauth_deny"
+    ((ptr _zctx_t) @-> string @-> returning void)
+
+  let configure_plain = foreign "zauth_configure_plain"
+    ((ptr _zctx_t) @-> string @-> string @-> returning void)
+    
+  let configure_curve = foreign "zauth_configure_curve"
+    ((ptr _zctx_t) @-> string @-> string @-> returning void)
+(*
+  let set_verbose = foreign "zauth_set_verbose"
+    ((ptr _zctx_t) @-> bool @-> returning void)
+*) 
+end
+
+module Beacon = struct
+
+  type t = zbeacon_t Ctypes.structure Ctypes.ptr 
+ 
+  let create = foreign "zbeacon_new"
+    (int @-> returning (ptr _zbeacon_t))
+
+  let hostname = foreign "zbeacon_hostname"
+    ((ptr _zbeacon_t) @-> returning string)
+
+  let set_interval = foreign "zbeacon_set_interval"
+    ((ptr _zbeacon_t) @-> int @-> returning void)
+  
+  let noecho = foreign "zbeacon_noecho"
+    ((ptr _zbeacon_t) @-> returning void)
+(*
+  let publish = foreign "zbeacon_publish"
+    ((ptr _zbeacon_t) @-> 
+*)
+  let silence = foreign "zbeacon_unsubscribe"
+    ((ptr _zbeacon_t) @-> returning void)
+
+end
