@@ -10,12 +10,23 @@ BuildDepends:
   ctypes.foreign,
   threads
 
-PreInstallCommand: cc -shared -o _build/src/dllzmq_stubs.so -lzmq
+PreInstallCommand: cc -shared -o _build/src/dllzmq_stubs.so -lczmq -lzmq
 
 Library "zmq"
   Path:       src
   BuildTools: ocamlbuild
   Modules:    Zmq
+  InternalModules: Structs,
+              Context,
+              Socket,
+              Str,
+              Poll,
+              Directory,
+              Auth, 
+              Beacon, 
+              Cert, 
+              Certstore, 
+              Clock
   CSources:   zmq.c
-  CCLib:      -Wl,-no-as-needed -lzmq
+  CCLib:      -Wl,-no-as-needed -lzmq -lczmq 
   DllLib:     -lzmq_stubs

@@ -32,36 +32,15 @@ open PosixTypes
 open Foreign
 open Unsigned
 
-include Structs
+let recv = foreign "zstr_recv"
+  ((ptr void) @-> returning string)
 
-type t = Structs.zcert_t Ctypes.structure Ctypes.ptr 
+let recv_nowait = foreign "zstr_recv_nowait"
+  ((ptr void) @-> returning string)
 
-let create = foreign "zcert_new"
-  (void @-> returning (ptr Structs._zcert_t))
-(*
-let destroy certificate = 
-  let destroy_stub = foreign "zcert_destroy"
-    (ptr (ptr _zcert_t) @-> returning void)
+let send ctx msg = 
+  let send_stub = foreign "zstr_send"
+    ((ptr void) @-> string @-> returning int)
   in
-  destroy_stub (addr certificate)
-*)
-let public_txt = foreign "zcert_public_txt"
-  ((ptr _zcert_t) @-> returning string)
-
-let secret_txt = foreign "zcert_secret_txt"
-  ((ptr _zcert_t) @-> returning string)
-
-let set_meta = foreign "zcert_set_meta"
-  ((ptr _zcert_t) @-> string @-> string @-> returning void)
-
-let meta = foreign "zcert_meta"
-  ((ptr _zcert_t) @-> string @-> returning string)
-
-let load = foreign "zcert_load"
-  (string @-> returning (ptr _zcert_t))
-
-let dup = foreign "zcert_dup"
-  ((ptr _zcert_t) @-> returning (ptr _zcert_t))
-
-let dump = foreign "zcert_dump"
-  ((ptr _zcert_t) @-> returning void)
+  match send_stub ctx msg with
+  | _ -> () 
