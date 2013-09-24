@@ -254,7 +254,7 @@ let last_endpoint = foreign "zsocket_last_endpoint"
 (* Set socket options *)
 let set_ipv6 socket flag = 
   let stub = foreign "zsocket_set_ipv6"
-    ((ptr void) @-> int -> returning void)
+    ((ptr void) @-> int @-> returning void)
   in
   match flag with
   | false -> stub socket 0

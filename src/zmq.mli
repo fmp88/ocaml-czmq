@@ -74,7 +74,7 @@ module Socket : sig
   (* Get socket options *)
   val ipv6 : kind t -> bool
   val ipv4only : kind t -> bool
-  val probe_router kind t -> bool
+  val probe_router : kind t -> bool
   val plain_server : kind t -> bool
   val plain_username : kind t -> string
   val plain_password : kind t -> string
