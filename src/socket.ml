@@ -118,3 +118,172 @@ let recv ?flag:(flag=None) socket =
     (ptr void @-> returning string)
   in
   recv_stub socket
+
+(* Get socket options *)
+let ipv6 socket = 
+  let stub = foreign "zsocket_ipv6"
+    ((ptr void) @-> returning int)
+  in
+  match stub socket with
+  | 0 -> false
+  | _ -> true
+
+let ipv4only socket = 
+  let stub = foreign "zsocket_ipv4only"
+    ((ptr void) @-> returning int)
+  in
+  match stub socket with
+  | 0 -> false
+  | _ -> true
+
+let probe_router socket = 
+  let stub = foreign "zsocket_probe_router"
+    ((ptr void) @-> returning int)
+  in
+  match stub socket with
+  | 0 -> false
+  | _ -> true
+
+let plain_server socket = 
+  let stub = foreign "zsocket_plain_server"
+    ((ptr void) @-> returning int)
+  in
+  match stub socket with
+  | 0 -> false
+  | _ -> true
+
+let plain_username  = foreign "zsocket_plain_username"
+    ((ptr void) @-> returning string)
+
+let plain_password  = foreign "zsocket_plain_password"
+    ((ptr void) @-> returning string)
+
+let curve_server  = foreign "zsocket_curve_server"
+    ((ptr void) @-> returning int)
+
+let curve_publickey  = foreign "zsocket_curve_publickey"
+    ((ptr void) @-> returning string)
+
+let curve_secretkey  = foreign "zsocket_curve_secretkey"
+    ((ptr void) @-> returning string)
+
+let curve_serverkey  = foreign "zsocket_curve_serverkey"
+    ((ptr void) @-> returning string)
+
+let zap_domain  = foreign "zsocket_zap_domain"
+    ((ptr void) @-> returning string)
+
+let socket_type = foreign "zsocket_socket_type"
+    ((ptr void) @-> returning int)
+
+let sndhwm  = foreign "zsocket_sndhwm"
+    ((ptr void) @-> returning int)
+
+let rcvhwm  = foreign "zsocket_rcvhwm"
+    ((ptr void) @-> returning int)
+
+let affinity  = foreign "zsocket_affinity"
+    ((ptr void) @-> returning int)
+
+let identity  = foreign "zsocket_identity"
+    ((ptr void) @-> returning string)
+
+let rate  = foreign "zsocket_rate"
+    ((ptr void) @-> returning int)
+
+let recovery_ivl  = foreign "zsocket_recovery_ivl"
+    ((ptr void) @-> returning int)
+
+let sndbuf  = foreign "zsocket_sndbuf"
+    ((ptr void) @-> returning int)
+
+let rcvbuf = foreign "zsocket_rcvbuf"
+    ((ptr void) @-> returning int)
+
+let linger = foreign "zsocket_linger"
+    ((ptr void) @-> returning int)
+
+let reconnect_ivl = foreign "zsocket_reconnect_ivl"
+    ((ptr void) @-> returning int)
+
+let reconnect_ivl_max = foreign "zsocket_reconnect_ivl_max"
+    ((ptr void) @-> returning int)
+
+let backlog = foreign "zsocket_backlog"
+    ((ptr void) @-> returning int)
+
+let maxmsgsize = foreign "zsocket_maxmsgsize"
+    ((ptr void) @-> returning int)
+
+let multicast_hops = foreign "zsocket_multicast_hops"
+    ((ptr void) @-> returning int)
+
+let rcvtimeo = foreign "zsocket_rcvtimeo"
+    ((ptr void) @-> returning int)
+
+let sndtimeo = foreign "zsocket_sndtimeo"
+    ((ptr void) @-> returning int)
+
+let tcp_keepalive = foreign "zsocket_tcp_keepalive"
+    ((ptr void) @-> returning int)
+
+let tcp_keepalive_idle = foreign "zsocket_tcp_keepalive_idle"
+    ((ptr void) @-> returning int)
+
+let tcp_keepalive_cnt = foreign "zsocket_tcp_keepalive_cnt"
+    ((ptr void) @-> returning int)
+
+let tcp_keepalive_intvl = foreign "zsocket_tcp_keepalive_intvl"
+    ((ptr void) @-> returning int)
+
+let tcp_accept_filter = foreign "zsocket_tcp_accept_filter"
+    ((ptr void) @-> returning string)
+
+let rcvmore = foreign "zsocket_rcvmore"
+    ((ptr void) @-> returning int)
+
+let fd = foreign "zsocket_fd"
+    ((ptr void) @-> returning int)
+
+let events = foreign "zsocket_events"
+    ((ptr void) @-> returning int)
+
+let last_endpoint = foreign "zsocket_last_endpoint"
+    ((ptr void) @-> returning string)
+
+(* Set socket options *)
+let set_ipv6 socket flag = 
+  let stub = foreign "zsocket_set_ipv6"
+    ((ptr void) @-> int -> returning void)
+  in
+  match flag with
+  | false -> stub socket 0
+  | true -> stub socket 1
+
+let set_plain_server = foreign "zsocket_set_plain_server"
+  ((ptr void) @-> int @-> returning void)
+
+let set_plain_username = foreign "zsocket_set_plain_username"
+  ((ptr void) @-> string @-> returning void)
+
+let set_plain_password = foreign "zsocket_set_plain_password"
+  ((ptr void) @-> string @-> returning void)
+
+let set_curve_server = foreign "zsocket_set_curve_server"
+  ((ptr void) @-> int @-> returning void)
+
+let set_curve_publickey = foreign "zsocket_set_curve_publickey"
+  ((ptr void) @-> string @-> returning void)
+(*
+let set_curve_publickey_bin = foreign "zsocket_set_curve_publickey_bin"
+  ((ptr void) @-> string @-> returning void)
+*)
+let set_curve_secretkey = foreign "zsocket_set_curve_secretkey"
+  ((ptr void) @-> string @-> returning void)
+(*
+let set_curve_secretkey_bin = foreign "zsocket_set_curve_secretkey_bin"
+  ((ptr void) @-> string @-> returning void)
+*)
+let set_zap_domain = foreign "zsocket_set_zap_domain"
+  ((ptr void) @-> string @-> returning void)
+

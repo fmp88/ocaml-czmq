@@ -70,6 +70,55 @@ module Socket : sig
 
   val connect : kind t -> string -> unit  
   val disconnect : kind t -> string -> unit  
+
+  (* Get socket options *)
+  val ipv6 : kind t -> bool
+  val ipv4only : kind t -> bool
+  val probe_router kind t -> bool
+  val plain_server : kind t -> bool
+  val plain_username : kind t -> string
+  val plain_password : kind t -> string
+  val curve_server : kind t -> int
+  val curve_publickey : kind t -> string
+  val curve_secretkey : kind t -> string
+  val curve_serverkey : kind t -> string
+  val zap_domain : kind t -> string
+  val socket_type : kind t -> int
+  val sndhwm : kind t -> int
+  val rcvhwm : kind t -> int
+  val affinity : kind t -> int
+  val identity : kind t -> string
+  val rate : kind t -> int 
+  val recovery_ivl : kind t -> int
+  val sndbuf : kind t -> int
+  val rcvbuf : kind t -> int
+  val linger : kind t -> int
+  val reconnect_ivl : kind t -> int
+  val reconnect_ivl_max : kind t -> int
+  val backlog : kind t -> int
+  val maxmsgsize : kind t -> int
+  val multicast_hops : kind t -> int
+  val rcvtimeo : kind t -> int
+  val sndtimeo : kind t -> int
+  val tcp_keepalive : kind t -> int
+  val tcp_keepalive_idle : kind t -> int
+  val tcp_keepalive_cnt : kind t -> int
+  val tcp_keepalive_intvl : kind t -> int
+  val tcp_accept_filter : kind t -> string
+  val rcvmore : kind t -> int
+  val fd : kind t -> int
+  val events : kind t -> int 
+  val last_endpoint : kind t -> string
+
+  (* Set socket options *)
+  val set_ipv6 : kind t -> bool -> unit
+  val set_plain_server : kind t -> int -> unit
+  val set_plain_username : kind t -> string -> unit
+  val set_plain_password : kind t -> string -> unit
+  val set_curve_server : kind t -> int -> unit
+  val set_curve_publickey : kind t -> string -> unit
+  val set_curve_secretkey : kind t -> string -> unit
+  val set_zap_domain : kind t -> string -> unit 
 (*
   type snd_flag = None | Dontwait | Sndmore | Dontwait_Sndmore
   val send : kind t -> ?flag:snd_flag -> string -> unit

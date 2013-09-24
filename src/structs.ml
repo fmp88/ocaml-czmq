@@ -50,3 +50,5 @@ let _zbeacon_t : zbeacon_t structure typ = structure "_zbeacon_t"
 type zdir_t
 let _zdir_t : zdir_t structure typ = structure "_zdir_t"
 
+type zconfig_t
+let _zconfig_t : zconfig_t structure typ = structure "_zconfig_t"
