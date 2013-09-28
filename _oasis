@@ -10,7 +10,7 @@ BuildDepends:
   ctypes.foreign,
   threads
 
-PreInstallCommand: cc -shared -o _build/src/dllzmq_stubs.so -lczmq -lzmq
+PreInstallCommand: cc -shared -o _build/src/dllzmq_stubs.so -lczmq -lzmq -lsodium
 
 Library "zmq"
   Path:       src
@@ -26,7 +26,9 @@ Library "zmq"
               Beacon, 
               Cert, 
               Certstore, 
-              Clock
+              Config,
+              Clock,
+              Sys
   CSources:   zmq.c
-  CCLib:      -Wl,-no-as-needed -lzmq -lczmq 
+  CCLib:      -Wl,-no-as-needed -lczmq -lzmq -lsodium
   DllLib:     -lzmq_stubs

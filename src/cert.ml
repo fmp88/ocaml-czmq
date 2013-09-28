@@ -60,8 +60,33 @@ let meta = foreign "zcert_meta"
 let load = foreign "zcert_load"
   (string @-> returning (ptr _zcert_t))
 
+let save self filename = 
+  let stub = foreign "zcert_save"
+    ((ptr _zcert_t) @-> string @-> returning int) 
+  in
+  match stub self filename with 
+  | _ -> ()
+
+let save_public self filename = 
+  let stub = foreign "zcert_save_public"
+    ((ptr _zcert_t) @-> string @-> returning int)
+  in
+  match stub self filename with
+  | _ -> ()
+
+let apply = foreign "zcert_apply"
+  ((ptr _zcert_t) @-> ptr void @-> returning void)
+
 let dup = foreign "zcert_dup"
   ((ptr _zcert_t) @-> returning (ptr _zcert_t))
+
+let eq self compare = 
+  let stub = foreign "zcert_eq"
+    ((ptr _zcert_t) @-> (ptr _zcert_t) @-> returning int)
+  in
+  match stub self compare with
+  | 0 -> false
+  | _ -> true
 
 let dump = foreign "zcert_dump"
   ((ptr _zcert_t) @-> returning void)

@@ -44,17 +44,22 @@ let destroy authenticator =
   destroy_stub (addr authenticator) 
 *)
 let allow = foreign "zauth_allow"
-  ((ptr Structs._zctx_t) @-> string @-> returning void)
+  ((ptr Structs._zauth_t) @-> string @-> returning void)
 
 let deny = foreign "zauth_deny"
-  ((ptr Structs._zctx_t) @-> string @-> returning void)
+  ((ptr Structs._zauth_t) @-> string @-> returning void)
 
 let configure_plain = foreign "zauth_configure_plain"
-  ((ptr Structs._zctx_t) @-> string @-> string @-> returning void)
+  ((ptr Structs._zauth_t) @-> string @-> string @-> returning void)
   
 let configure_curve = foreign "zauth_configure_curve"
-  ((ptr Structs._zctx_t) @-> string @-> string @-> returning void)
-(*
-let set_verbose = foreign "zauth_set_verbose"
-  ((ptr _zctx_t) @-> bool @-> returning void)
-*) 
+  ((ptr Structs._zauth_t) @-> string @-> string @-> returning void)
+
+let set_verbose auth flag = 
+  let stub = foreign "zauth_set_verbose"
+    ((ptr Structs._zauth_t) @-> int @-> returning void)
+  in
+  match flag with 
+  | true -> stub auth 1
+  | false -> stub auth 0
+

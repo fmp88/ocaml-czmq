@@ -112,13 +112,40 @@ module Socket : sig
 
   (* Set socket options *)
   val set_ipv6 : kind t -> bool -> unit
+  val set_immediate : kind t -> int -> unit
+  val set_router_raw : kind t -> int -> unit
+  val set_ipv4only : kind t -> int -> unit
+  val set_delay_attach_on_connect : kind t -> int -> unit
+  val set_router_mandatory : kind t -> int -> unit
+  val set_req_relaxed : kind t -> int -> unit
+  val set_req_correlate : kind t -> int -> unit
+  val set_conflate : kind t -> int -> unit
   val set_plain_server : kind t -> int -> unit
   val set_plain_username : kind t -> string -> unit
   val set_plain_password : kind t -> string -> unit
-  val set_curve_server : kind t -> int -> unit
+  val set_curve_server : kind t -> bool -> unit
   val set_curve_publickey : kind t -> string -> unit
   val set_curve_secretkey : kind t -> string -> unit
   val set_zap_domain : kind t -> string -> unit 
+  val set_sndhwm : kind t -> int -> unit
+  val set_rcvhwm : kind t -> int -> unit
+  val set_affinity : kind t -> int -> unit
+  val set_subscribe : kind t -> string -> unit
+  val set_unsubscribe : kind t -> string -> unit
+  val set_identity : kind t -> string -> unit
+  val set_rate : kind t -> int -> unit
+  val set_recovery_ivl : kind t -> int -> unit
+  val set_sndbuf : kind t -> int -> unit
+  val set_rcvbuf : kind t -> int -> unit
+  val set_linger : kind t -> int -> unit
+  val set_reconnect_ivl : kind t -> int -> unit
+  val set_reconnect_ivl_max : kind t -> int -> unit
+  val set_backlog : kind t -> int -> unit
+  val set_maxmsgsize : kind t -> int -> unit
+  val set_multicast_hops : kind t -> int -> unit
+  val set_rcvtimeo : kind t -> int -> unit
+  val set_sndtimeo : kind t -> int -> unit
+
 (*
   type snd_flag = None | Dontwait | Sndmore | Dontwait_Sndmore
   val send : kind t -> ?flag:snd_flag -> string -> unit
@@ -146,13 +173,15 @@ module Auth : sig
 (*
   val destroy : t -> unit
 *)
-  val allow : Context.t -> string -> unit
+  val allow : t -> string -> unit
 
-  val deny : Context.t -> string -> unit
+  val deny : t -> string -> unit
 
-  val configure_plain : Context.t -> string -> string -> unit
+  val configure_plain : t -> string -> string -> unit
   
-  val configure_curve : Context.t -> string -> string -> unit
+  val configure_curve : t -> string -> string -> unit
+
+  val set_verbose : t -> bool -> unit
 
 end
 
@@ -189,6 +218,14 @@ module Cert : sig
   val meta : t -> string -> string
 
   val load : string -> t
+
+  val save : t -> string -> unit
+
+  val save_public : t -> string -> unit
+
+  val apply : t -> Socket.kind Socket.t -> unit
+ 
+  val eq : t -> t -> bool
 
   val dump : t -> unit
 
@@ -227,6 +264,12 @@ module Directory : sig
   val path : t -> string
 
   val dump : t -> int -> unit
+
+end
+
+module Sys : sig
+  
+  val dir_create : string -> unit
 
 end
 (*
