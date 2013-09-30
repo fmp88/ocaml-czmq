@@ -15,9 +15,7 @@ let () =
 
   (* Create and bind server socket *)
   let server = Czmq.Socket.create ctx `Push in
-(*
   Czmq.Socket.set_zap_domain server "global";
-*)
   Czmq.Socket.bind server "tcp://*:9000";
 
   (* Create and connect client socket *)
