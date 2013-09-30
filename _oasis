@@ -1,21 +1,21 @@
 OASISFormat: 0.3
-Name:        zmq
+Name:        czmq
 Version:     0.1.0
-Synopsis:    OCaml binding for Zeromq 3.3
+Synopsis:    OCaml binding for the High-level C Binding for Zeromq 
 Authors:     Florian Pichlmeier
-License:     BSD3
+License:     LGPL-3.0 with OCaml linking exception
 Plugins:     META (0.3), StdFiles (0.3), DevFiles (0.3)
 
 BuildDepends:
   ctypes.foreign,
   threads
 
-PreInstallCommand: cc -shared -o _build/src/dllzmq_stubs.so -lczmq -lzmq -lsodium
+PreInstallCommand: cc -shared -o _build/src/dllczmq_stubs.so -lczmq -lzmq -lsodium
 
-Library "zmq"
+Library "czmq"
   Path:       src
   BuildTools: ocamlbuild
-  Modules:    Zmq
+  Modules:    Czmq
   InternalModules: Structs,
               Context,
               Socket,
@@ -29,6 +29,6 @@ Library "zmq"
               Config,
               Clock,
               Sys
-  CSources:   zmq.c
+  CSources:   czmq.c
   CCLib:      -Wl,-no-as-needed -lczmq -lzmq -lsodium
-  DllLib:     -lzmq_stubs
+  DllLib:     -lczmq_stubs
