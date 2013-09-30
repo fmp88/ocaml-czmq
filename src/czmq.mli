@@ -126,6 +126,7 @@ module Socket : sig
   val set_curve_server : kind t -> bool -> unit
   val set_curve_publickey : kind t -> string -> unit
   val set_curve_secretkey : kind t -> string -> unit
+  val set_curve_serverkey : kind t -> string -> unit
   val set_zap_domain : kind t -> string -> unit 
   val set_sndhwm : kind t -> int -> unit
   val set_rcvhwm : kind t -> int -> unit
@@ -213,6 +214,8 @@ module Cert : sig
 (*
   val destroy : t -> unit
 *)
+  val public_key : t -> string
+
   val public_txt : t -> string
 
   val secret_txt : t -> string

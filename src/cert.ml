@@ -26,7 +26,6 @@
 open Ctypes
 open PosixTypes
 open Foreign
-open Unsigned
 
 include Structs
 
@@ -41,6 +40,12 @@ let destroy certificate =
   in
   destroy_stub (addr certificate)
 *)
+let public_key cert = 
+  let stub = foreign "zcert_public_key"
+    ((ptr _zcert_t) @-> returning (ptr uint8_t))
+  in
+  Unsigned.UInt8.to_string (!@(stub cert))
+
 let public_txt = foreign "zcert_public_txt"
   ((ptr _zcert_t) @-> returning string)
 

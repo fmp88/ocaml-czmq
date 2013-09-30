@@ -319,6 +319,9 @@ let set_curve_secretkey = foreign "zsocket_set_curve_secretkey"
 let set_curve_secretkey_bin = foreign "zsocket_set_curve_secretkey_bin"
   ((ptr void) @-> string @-> returning void)
 *)
+let set_curve_serverkey = foreign "zsocket_set_curve_serverkey"
+  ((ptr void) @-> string @-> returning void)
+
 let set_zap_domain = foreign "zsocket_set_zap_domain"
   ((ptr void) @-> string @-> returning void)
 

@@ -36,9 +36,7 @@ let () =
    (*  Create and connect client socket *)
    let client = Czmq.Socket.create ctx `Pull in
    Czmq.Cert.apply client_cert client;
-(*
    Czmq.Socket.set_curve_serverkey client server_key;
-*)
    Czmq.Socket.connect client "tcp://127.0.0.1:9000";
    
    Czmq.Clock.sleep 1000;
