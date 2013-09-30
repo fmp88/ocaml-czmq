@@ -20,7 +20,7 @@ Library "czmq"
               Context,
               Socket,
               Str,
-              Poll,
+              Poller,
               Directory,
               Auth, 
               Beacon, 
