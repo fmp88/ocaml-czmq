@@ -326,9 +326,9 @@ module Config : sig
   val locate : t -> string -> t
 
   val resolve : t -> string -> string -> string
-
+(*
   val set_path : t -> string -> string -> unit
-
+*)
   val at_depth :  t -> int -> t
 
   val comment : t -> string -> unit

@@ -59,10 +59,10 @@ let locate = foreign "zconfig_locate"
 
 let resolve = foreign "zconfig_resolve"
   ((ptr Structs._zconfig_t) @-> string @-> string @-> returning string)
-
+(*
 let set_path = foreign "zconfig_set_path"
   ((ptr Structs._zconfig_t) @-> string @-> string @-> returning void)
-
+*)
 let at_depth = foreign "zconfig_at_depth"
   ((ptr Structs._zconfig_t) @-> int @-> returning (ptr Structs._zconfig_t))
 
