@@ -28,15 +28,25 @@ open PosixTypes
 open Foreign
 open Unsigned
 
-let recv = foreign "zstr_recv"
-  ((ptr void) @-> returning string)
-
-let recv_nowait = foreign "zstr_recv_nowait"
-  ((ptr void) @-> returning string)
-
-let send ctx msg = 
-  let send_stub = foreign "zstr_send"
-    ((ptr void) @-> string @-> returning int)
+let version () = 
+  let zmq_version_stub = foreign "zmq_version" 
+    (ptr int @-> ptr int @-> ptr int @-> returning void)
   in
-  match send_stub ctx msg with
-  | _ -> () 
+  let major = allocate int 0 in
+  let minor = allocate int 0 in
+  let patch = allocate int 0 in
+  zmq_version_stub major minor patch;
+  (!@major,!@minor,!@patch)
+
+module Context = Context
+module Socket = Socket
+module Str = Str
+module Auth = Auth
+module Beacon = Beacon
+module Cert = Cert
+module Certstore = Certstore
+module Clock = Clock
+module Directory = Directory
+module Poller = Poller
+module Sys = Sys
+module Config = Config
