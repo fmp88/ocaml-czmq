@@ -19,9 +19,7 @@ let () =
    let client_cert = Czmq.Cert.create () in
    Czmq.Sys.dir_create (".curve");
    Czmq.Cert.set_meta client_cert "name" "Client test certificate";
-(*
    Czmq.Cert.save_public client_cert ".curve/testcert.pub";
-*)
    
    (*  Prepare the server certificate as we did in Stonehouse *)
    let server_cert = Czmq.Cert.create () in
