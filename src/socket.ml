@@ -67,8 +67,7 @@ let destroy =
 let bind ctx name = 
   let bind_stub = foreign "zsocket_bind" (ptr void @-> string @-> returning int) in
   match bind_stub ctx name with 
-  | 0 -> ()
-  | _ -> raise (General_Error "Bind socket")
+  | _ -> ()
 
 let unbind ctx name = 
   let unbind_stub = foreign "zsocket_unbind" (ptr void @-> string @-> returning int)
@@ -92,6 +91,17 @@ let disconnect ctx name =
   | 0 -> ()
   | _ -> raise (General_Error "Disconnect socket")
 
+let poll socket msecs = 
+  let stub = foreign "zsocket_poll"
+    ((ptr void) @-> int @-> returning int)
+  in
+  match stub socket msecs with
+  | 0 -> false
+  | _ -> true
+
+let type_str = foreign "zsocket_type_str"
+  ((ptr void) @-> returning string)
+  
 type snd_flag = None | Dontwait | Sndmore | Dontwait_Sndmore
 let send socket ?flag:(flag=None) m = 
   let c_flag = match flag with

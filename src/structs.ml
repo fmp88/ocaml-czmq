@@ -52,3 +52,6 @@ let _zdir_t : zdir_t structure typ = structure "_zdir_t"
 
 type zconfig_t
 let _zconfig_t : zconfig_t structure typ = structure "_zconfig_t"
+
+type zpoller_t
+let _zpoller_t : zpoller_t structure typ = structure "_zpoller_t"

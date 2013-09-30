@@ -31,7 +31,7 @@ open Ctypes
 open PosixTypes
 open Foreign
 open Unsigned
-(*
+
 type t = Structs.zconfig_t Ctypes.structure Ctypes.ptr 
 
 let create = foreign "zconfig_new"
@@ -78,4 +78,4 @@ let load = foreign "zconfig_load"
 
 let dump = foreign "zconfig_dump"
   ((ptr Structs._zconfig_t) @-> returning void)
-*)
+

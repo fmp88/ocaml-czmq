@@ -45,9 +45,16 @@ let set_interval = foreign "zbeacon_set_interval"
 
 let noecho = foreign "zbeacon_noecho"
   ((ptr Structs._zbeacon_t) @-> returning void)
+
+let silence = foreign "zbeacon_unsubscribe"
+  ((ptr Structs._zbeacon_t) @-> returning void)
+
 (*
 let publish = foreign "zbeacon_publish"
   ((ptr _zbeacon_t) @-> 
 *)
-let silence = foreign "zbeacon_unsubscribe"
+let unsubscribe = foreign "zbeacon_unsubscribe"
   ((ptr Structs._zbeacon_t) @-> returning void)
+
+let socket = foreign "zbeacon_socket"
+  ((ptr Structs._zbeacon_t) @-> returning (ptr void))

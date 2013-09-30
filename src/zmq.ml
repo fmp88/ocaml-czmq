@@ -51,5 +51,6 @@ module Cert = Cert
 module Certstore = Certstore
 module Clock = Clock
 module Directory = Directory
-module Poll = Poll
+module Poller = Poller
 module Sys = Sys
+module Config = Config

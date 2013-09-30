@@ -71,6 +71,10 @@ module Socket : sig
   val connect : kind t -> string -> unit  
   val disconnect : kind t -> string -> unit  
 
+  val poll : kind t -> int -> bool
+
+  val type_str : kind t -> string
+
   (* Get socket options *)
   val ipv6 : kind t -> bool
   val ipv4only : kind t -> bool
@@ -199,6 +203,10 @@ module Beacon : sig
 
   val silence : t -> unit 
 
+  val unsubscribe : t -> unit
+
+  val socket : t -> Socket.kind Socket.t
+
 end
 
 module Cert : sig
@@ -269,25 +277,68 @@ end
 
 module Sys : sig
   
+  val set_interface : string -> unit
+
+  val interface : unit -> string
+
+  val file_exists : string -> bool
+
   val dir_create : string -> unit
 
+  val dir_delete : string -> unit
+
+  val file_mode_private : unit -> unit
+
+  val file_mode_default : unit -> unit
+
 end
-(*
-module Poll : sig
+
+module Poller : sig
 
   type t
 
-  type poll_t
+  val create : Socket.kind Socket.t list -> t
 
-  type event = In | Out | InOut
-  type item = (Socket.kind Socket.t * event)
+  val wait : t -> int -> Socket.kind Socket.t
 
-(*val mask : item array -> t*)
-  val mask :(unit Ctypes.ptr * event) Ctypes.Array.t ->
-           poll_t Ctypes.structure Ctypes.Array.t
-(*
-  val poll : ?timeout: int -> t event option array
-*)
+  val expired : t -> bool
+
+  val terminated : t -> bool
+
 end
-*)  
+  
+module Config : sig
+  
+  type t
+  
+  val create : string -> t -> t
+ 
+  val name : t -> string
 
+  val value : t -> string
+
+  val put : t -> string -> string -> unit
+
+  val set_name : t -> string -> unit
+
+  val set_value : t -> string -> unit
+
+  val child : t -> t
+  
+  val next : t -> t
+
+  val locate : t -> string -> t
+
+  val resolve : t -> string -> string -> string
+
+  val set_path : t -> string -> string -> unit
+
+  val at_depth :  t -> int -> t
+
+  val comment : t -> string -> unit
+
+  val load : string -> t
+
+  val dump : t -> unit
+
+end
