@@ -40,3 +40,10 @@ let send ctx msg =
   in
   match send_stub ctx msg with
   | _ -> () 
+(*
+let sendx ctx msg_list =
+  let variads () = ((List.fold_left (fun a msg -> a @-> msg) ctx msg_list) @-> returning int)
+  in
+  match variads () with
+  | _ -> ()
+*)

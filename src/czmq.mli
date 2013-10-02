@@ -72,62 +72,38 @@ module Socket : sig
   val type_str : kind t -> string
 
   (* Get socket options *)
-  val ipv6 : kind t -> bool
-  val ipv4only : kind t -> bool
-  val probe_router : kind t -> bool
-  val plain_server : kind t -> bool
-  val plain_username : kind t -> string
-  val plain_password : kind t -> string
-  val curve_server : kind t -> int
-  val curve_publickey : kind t -> string
-  val curve_secretkey : kind t -> string
-  val curve_serverkey : kind t -> string
-  val zap_domain : kind t -> string
-  val socket_type : kind t -> int
-  val sndhwm : kind t -> int
-  val rcvhwm : kind t -> int
-  val affinity : kind t -> int
-  val identity : kind t -> string
+  val ipv4only : kind t -> bool 
+  val socket_type : kind t -> bool 
+  val sndhwm : kind t -> int 
+  val rcvhwm : kind t -> int 
+  val affinity : kind t -> int 
+  val identity : kind t -> string 
   val rate : kind t -> int 
-  val recovery_ivl : kind t -> int
-  val sndbuf : kind t -> int
-  val rcvbuf : kind t -> int
-  val linger : kind t -> int
-  val reconnect_ivl : kind t -> int
-  val reconnect_ivl_max : kind t -> int
-  val backlog : kind t -> int
-  val maxmsgsize : kind t -> int
-  val multicast_hops : kind t -> int
-  val rcvtimeo : kind t -> int
-  val sndtimeo : kind t -> int
-  val tcp_keepalive : kind t -> int
-  val tcp_keepalive_idle : kind t -> int
-  val tcp_keepalive_cnt : kind t -> int
-  val tcp_keepalive_intvl : kind t -> int
-  val tcp_accept_filter : kind t -> string
-  val rcvmore : kind t -> int
-  val fd : kind t -> int
+  val recovery_ivl : kind t -> int 
+  val sndbuf : kind t -> int 
+  val rcvbuf : kind t -> int 
+  val linger : kind t -> int 
+  val reconnect_ivl : kind t -> int 
+  val reconnect_ivl_max : kind t -> int 
+  val backlog : kind t -> int 
+  val maxmsgsize : kind t -> int 
+  val multicast_hops : kind t -> int 
+  val rcvtimeo : kind t -> int 
+  val sndtimeo : kind t -> int 
+  val tcp_keepalive : kind t -> int 
+  val tcp_keepalive_idle : kind t -> int 
+  val tcp_keepalive_cnt : kind t -> int 
+  val tcp_keepalive_intvl : kind t -> int 
+  val tcp_accept_filter : kind t -> string 
+  val rcvmore : kind t -> int 
+  val fd : kind t -> int 
   val events : kind t -> int 
   val last_endpoint : kind t -> string
 
   (* Set socket options *)
-  val set_ipv6 : kind t -> bool -> unit
-  val set_immediate : kind t -> int -> unit
   val set_router_raw : kind t -> int -> unit
   val set_ipv4only : kind t -> int -> unit
   val set_delay_attach_on_connect : kind t -> int -> unit
-  val set_router_mandatory : kind t -> int -> unit
-  val set_req_relaxed : kind t -> int -> unit
-  val set_req_correlate : kind t -> int -> unit
-  val set_conflate : kind t -> int -> unit
-  val set_plain_server : kind t -> int -> unit
-  val set_plain_username : kind t -> string -> unit
-  val set_plain_password : kind t -> string -> unit
-  val set_curve_server : kind t -> bool -> unit
-  val set_curve_publickey : kind t -> string -> unit
-  val set_curve_secretkey : kind t -> string -> unit
-  val set_curve_serverkey : kind t -> string -> unit
-  val set_zap_domain : kind t -> string -> unit 
   val set_sndhwm : kind t -> int -> unit
   val set_rcvhwm : kind t -> int -> unit
   val set_affinity : kind t -> int -> unit
@@ -140,12 +116,17 @@ module Socket : sig
   val set_rcvbuf : kind t -> int -> unit
   val set_linger : kind t -> int -> unit
   val set_reconnect_ivl : kind t -> int -> unit
-  val set_reconnect_ivl_max : kind t -> int -> unit
   val set_backlog : kind t -> int -> unit
   val set_maxmsgsize : kind t -> int -> unit
   val set_multicast_hops : kind t -> int -> unit
   val set_rcvtimeo : kind t -> int -> unit
   val set_sndtimeo : kind t -> int -> unit
+  val set_xpub_verbose : kind t -> int -> unit
+  val set_tcp_keepalive : kind t -> int -> unit
+  val set_tcp_keepalive_idle : kind t -> int -> unit
+  val set_tcp_keepalive_cnt : kind t -> int -> unit
+  val set_tcp_keepalive_intvl : kind t -> int -> unit
+  val set_tcp_accept_filter : kind t -> string -> unit
 
 (*
   type snd_flag = None | Dontwait | Sndmore | Dontwait_Sndmore
