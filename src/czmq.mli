@@ -39,16 +39,7 @@ module Context : sig
   val set_pipehwm : t -> int -> unit
   val set_sndhwm : t -> int -> unit
   val set_rcvhwm : t -> int -> unit
-  (*
-  val set_max_sockets : t -> int -> unit 
-  val set_ipv6 : t -> bool -> unit 
-  *)
-  (*
-  (* Getter *)
-  val get_io_threads : t -> int
-  val get_max_sockets : t -> int
-  val get_ipv6 : t -> bool
-  *)
+
 end
 
 module Socket : sig
@@ -128,13 +119,6 @@ module Socket : sig
   val set_tcp_keepalive_intvl : kind t -> int -> unit
   val set_tcp_accept_filter : kind t -> string -> unit
 
-(*
-  type snd_flag = None | Dontwait | Sndmore | Dontwait_Sndmore
-  val send : kind t -> ?flag:snd_flag -> string -> unit
-
-  type recv_flag = None | Dontwait
-  val recv : ?flag:recv_flag -> kind t -> string
-*)
 end
 
 module Str : sig
