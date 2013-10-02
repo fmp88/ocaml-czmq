@@ -275,7 +275,7 @@ module Config : sig
   
   type t
   
-  val create : string -> t -> t
+  val create : string -> t option -> t
  
   val name : t -> string
 

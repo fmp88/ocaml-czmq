@@ -31,7 +31,7 @@ open Unsigned
 type t = Structs.zconfig_t Ctypes.structure Ctypes.ptr 
 
 let create = foreign "zconfig_new"
-  (string @-> (ptr Structs._zconfig_t) @-> returning (ptr Structs._zconfig_t))
+  (string @-> (ptr_opt Structs._zconfig_t) @-> returning (ptr Structs._zconfig_t))
 
 let name = foreign "zconfig_name"
   ((ptr Structs._zconfig_t) @-> returning string)
