@@ -341,3 +341,11 @@ module Config : sig
   val dump : t -> unit
 
 end
+
+module Thread : sig
+(*
+  val create : 
+
+  val fork : 
+*)
+end
