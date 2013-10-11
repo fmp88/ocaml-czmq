@@ -39,16 +39,7 @@ module Context : sig
   val set_pipehwm : t -> int -> unit
   val set_sndhwm : t -> int -> unit
   val set_rcvhwm : t -> int -> unit
-  (*
-  val set_max_sockets : t -> int -> unit 
-  val set_ipv6 : t -> bool -> unit 
-  *)
-  (*
-  (* Getter *)
-  val get_io_threads : t -> int
-  val get_max_sockets : t -> int
-  val get_ipv6 : t -> bool
-  *)
+  
 end
 
 module Socket : sig
