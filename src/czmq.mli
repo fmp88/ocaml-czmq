@@ -138,13 +138,6 @@ module Socket : sig
   val set_rcvtimeo : kind t -> int -> unit
   val set_sndtimeo : kind t -> int -> unit
 
-(*
-  type snd_flag = None | Dontwait | Sndmore | Dontwait_Sndmore
-  val send : kind t -> ?flag:snd_flag -> string -> unit
-
-  type recv_flag = None | Dontwait
-  val recv : ?flag:recv_flag -> kind t -> string
-*)
 end
 
 module Str : sig
