@@ -14,6 +14,8 @@ module Make (S : Ser ) = struct
   
   let send socket msg = Str.send socket (S.encode msg)
 
+  let sendm socket msg = Str.sendm socket (S.encode msg)
+
   let sendx socket msg_list = Str.sendx socket (List.map (fun msg -> S.encode msg) msg_list)
 
   let recv socket = S.decode (Str.recv socket)
