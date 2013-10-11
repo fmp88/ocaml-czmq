@@ -28,7 +28,8 @@ Library "czmq"
               Certstore, 
               Config,
               Clock,
-              Sys
+              Sys,
+              Serialization
   CSources:   czmq.c
   CCLib:      -Wl,-no-as-needed -lczmq -lzmq -lsodium
   DllLib:     -lczmq_stubs
