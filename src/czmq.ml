@@ -50,3 +50,4 @@ module Directory = Directory
 module Poller = Poller
 module Sys = Sys
 module Config = Config
+module Serialization = Serialization
