@@ -205,8 +205,13 @@ let tcp_keepalive_intvl = foreign "zsocket_tcp_keepalive_intvl"
 let tcp_accept_filter = foreign "zsocket_tcp_accept_filter"
     ((ptr void) @-> returning string)
 
-let rcvmore = foreign "zsocket_rcvmore"
+let rcvmore socket = 
+  let stub = foreign "zsocket_rcvmore"
     ((ptr void) @-> returning int)
+  in
+  match stub socket with 
+  | 0 -> false
+  | _ -> true
 
 let fd = foreign "zsocket_fd"
     ((ptr void) @-> returning int)
