@@ -40,10 +40,28 @@ let send ctx msg =
   in
   match send_stub ctx msg with
   | _ -> () 
-(*
-let sendx ctx msg_list =
-  let variads () = ((List.fold_left (fun a msg -> a @-> msg) ctx msg_list) @-> returning int)
+
+let sendm ctx msg = 
+  let stub = foreign "zstr_sendm"
+    ((ptr void) @-> string @-> returning int)
   in
-  match variads () with
+  match stub ctx msg with
+  | _ -> ()
+
+let sendx socket msg_list =
+  let c_array : string Ctypes.array = Array.of_list string msg_list 
+  in
+  let stub = foreign "zstr_sendx_array" 
+    ((ptr void) @-> ptr string @-> size_t @-> returning int)
+  in
+  match stub socket (Array.start c_array) (Size_t.of_int(List.length msg_list))with 
+  | _ -> ()
+(*
+let recvx socket =
+  let c_array : string Ctypes.array = Array.of_list string msg_list in
+  let stub = foreign "zstr_sendx_array" 
+    ((ptr void) @-> (array (List.length msg_list) string ) @-> returning int)
+  in
+  match stub socket c_array with 
   | _ -> ()
 *)
