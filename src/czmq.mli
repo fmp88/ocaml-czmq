@@ -86,7 +86,7 @@ module Socket : sig
   val tcp_keepalive_cnt : kind t -> int 
   val tcp_keepalive_intvl : kind t -> int 
   val tcp_accept_filter : kind t -> string 
-  val rcvmore : kind t -> int 
+  val rcvmore : kind t -> bool 
   val fd : kind t -> int 
   val events : kind t -> int 
   val last_endpoint : kind t -> string
@@ -128,6 +128,10 @@ module Str : sig
   val recv_nowait : Socket.kind Socket.t -> string
 
   val send : Socket.kind Socket.t -> string -> unit
+  
+  val sendm : Socket.kind Socket.t -> string -> unit
+
+  val sendx : Socket.kind Socket.t -> string list -> unit
 
 end
 
@@ -304,5 +308,33 @@ module Config : sig
   val load : string -> t
 
   val dump : t -> unit
+
+end
+
+module Serialization : sig
+
+  module type Ser = sig
+
+    type t
+  
+    val decode : string -> t
+
+    val encode : t -> string 
+
+  end
+
+  module Make : functor(S : Ser) -> sig
+
+    type t
+
+    val send : Socket.kind Socket.t -> t -> unit
+
+    val sendm : Socket.kind Socket.t -> t -> unit
+
+    val sendx : Socket.kind Socket.t -> t list -> unit
+
+    val recv : Socket.kind Socket.t -> t
+
+  end
 
 end
