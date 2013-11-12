@@ -39,16 +39,9 @@ module Context : sig
   val set_pipehwm : t -> int -> unit
   val set_sndhwm : t -> int -> unit
   val set_rcvhwm : t -> int -> unit
-  (*
-  val set_max_sockets : t -> int -> unit 
-  val set_ipv6 : t -> bool -> unit 
-  *)
-  (*
-  (* Getter *)
-  val get_io_threads : t -> int
-  val get_max_sockets : t -> int
-  val get_ipv6 : t -> bool
-  *)
+
+  val interrupted : bool
+
 end
 
 module Socket : sig
@@ -105,7 +98,7 @@ module Socket : sig
   val tcp_keepalive_cnt : kind t -> int
   val tcp_keepalive_intvl : kind t -> int
   val tcp_accept_filter : kind t -> string
-  val rcvmore : kind t -> int
+  val rcvmore : kind t -> bool
   val fd : kind t -> int
   val events : kind t -> int 
   val last_endpoint : kind t -> string
@@ -113,7 +106,7 @@ module Socket : sig
   (* Set socket options *)
   val set_ipv6 : kind t -> bool -> unit
   val set_immediate : kind t -> int -> unit
-  val set_router_raw : kind t -> int -> unit
+  val set_router_raw : [`Router] t -> int -> unit
   val set_ipv4only : kind t -> int -> unit
   val set_delay_attach_on_connect : kind t -> int -> unit
   val set_router_mandatory : kind t -> int -> unit
@@ -131,9 +124,9 @@ module Socket : sig
   val set_sndhwm : kind t -> int -> unit
   val set_rcvhwm : kind t -> int -> unit
   val set_affinity : kind t -> int -> unit
-  val set_subscribe : kind t -> string -> unit
-  val set_unsubscribe : kind t -> string -> unit
-  val set_identity : kind t -> string -> unit
+  val set_subscribe : [>`Sub] t -> string -> unit
+  val set_unsubscribe : [>`Sub] t -> string -> unit
+  val set_identity : [>`Req|`Rep|`Dealer|`Router] t -> string -> unit
   val set_rate : kind t -> int -> unit
   val set_recovery_ivl : kind t -> int -> unit
   val set_sndbuf : kind t -> int -> unit
@@ -163,6 +156,10 @@ module Str : sig
   val recv_nowait : Socket.kind Socket.t -> string
 
   val send : Socket.kind Socket.t -> string -> unit
+
+  val sendx : Socket.kind Socket.t -> string list -> unit
+
+  val recvx : Socket.kind Socket.t -> string list
 
 end
 
@@ -273,7 +270,7 @@ module Directory : sig
   val dump : t -> int -> unit
 
 end
-
+(*
 module Sys : sig
   
   val set_interface : string -> unit
@@ -291,14 +288,14 @@ module Sys : sig
   val file_mode_default : unit -> unit
 
 end
-
+*)
 module Poller : sig
 
   type t
 
   val create : Socket.kind Socket.t list -> t
 
-  val wait : t -> int -> Socket.kind Socket.t
+  val wait : t -> int -> Socket.kind Socket.t option
 
   val expired : t -> bool
 
@@ -342,6 +339,7 @@ module Config : sig
 
 end
 
+(*
 module Thread : sig
 (*
   val create : 
@@ -349,3 +347,4 @@ module Thread : sig
   val fork : 
 *)
 end
+*)

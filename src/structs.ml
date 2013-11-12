@@ -51,3 +51,7 @@ let _zconfig_t : zconfig_t structure typ = structure "_zconfig_t"
 
 type zpoller_t
 let _zpoller_t : zpoller_t structure typ = structure "_zpoller_t"
+
+type zmsg_t
+let _zmsg_t : zmsg_t structure typ = structure "_zmsg_t"
+let content_size = _zmsg_t *:* size_t

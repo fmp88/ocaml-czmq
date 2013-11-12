@@ -28,11 +28,21 @@ open PosixTypes
 open Foreign
 open Unsigned
 
-let recv = foreign "zstr_recv"
-  ((ptr void) @-> returning string)
+let recv socket = 
+  let stub = foreign "zstr_recv"
+    ((ptr void) @-> returning string_opt)
+  in
+  match stub socket with
+  | None -> exit 2;
+  | Some x -> x
 
-let recv_nowait = foreign "zstr_recv_nowait"
-  ((ptr void) @-> returning string)
+let recv_nowait socket = 
+  let stub = foreign "zstr_recv_nowait"
+    ((ptr void) @-> returning string_opt)
+  in
+  match stub socket with
+  | None -> exit 2;
+  | Some x -> x
 
 let send ctx msg = 
   let send_stub = foreign "zstr_send"
@@ -49,19 +59,17 @@ let sendm ctx msg =
   | _ -> ()
 
 let sendx socket msg_list =
-  let c_array : string Ctypes.array = Array.of_list string msg_list 
+  let rec iter = function
+  | []    -> ()
+  | x::[] -> send socket x
+  | x::y  -> sendm socket x;
+            iter y
   in
-  let stub = foreign "zstr_sendx_array" 
-    ((ptr void) @-> ptr string @-> size_t @-> returning int)
-  in
-  match stub socket (Array.start c_array) (Size_t.of_int(List.length msg_list))with 
-  | _ -> ()
-(*
+  iter msg_list
+
 let recvx socket =
-  let c_array : string Ctypes.array = Array.of_list string msg_list in
-  let stub = foreign "zstr_sendx_array" 
-    ((ptr void) @-> (array (List.length msg_list) string ) @-> returning int)
+  let rec collect acc = match Socket.rcvmore socket with
+  | false -> acc@[recv socket]
+  | true  -> collect (acc@[recv socket])
   in
-  match stub socket c_array with 
-  | _ -> ()
-*)
+  collect []

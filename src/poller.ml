@@ -58,8 +58,12 @@ let create reader_list =
     (List.nth reader_list 3) (List.nth reader_list 4)
   | _ -> raise (General_Error "To many readers")
 
-let wait = foreign "zpoller_wait"
-  ((ptr Structs._zpoller_t) @-> int @-> returning (ptr void))
+let wait sockets timeout = 
+  let stub = foreign "zpoller_wait" ((ptr Structs._zpoller_t) @-> int @-> returning (ptr void))
+  in
+  match stub sockets timeout with
+  | null -> None
+  | x -> Some x
 
 let expired self = 
   let stub = foreign "zpoller_expired"
