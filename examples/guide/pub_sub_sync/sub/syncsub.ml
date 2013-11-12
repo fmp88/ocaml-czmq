@@ -28,4 +28,4 @@ let _ =
     else 
       update_nbr := !update_nbr + 1
   done;
-  Printf.printf "Received %d updates\n" !update_nbr
+  Printf.printf "Received %d updates\n%!" !update_nbr
