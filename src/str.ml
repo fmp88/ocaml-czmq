@@ -44,7 +44,7 @@ let recv_nowait socket =
   | None -> exit 2;
   | Some x -> x
 
-let send ctx msg = 
+let send ctx msg= 
   let send_stub = foreign "zstr_send"
     ((ptr void) @-> string @-> returning int)
   in
