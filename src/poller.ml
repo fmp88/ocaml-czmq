@@ -34,35 +34,35 @@ type t = Structs.zpoller_t Ctypes.structure Ctypes.ptr
 
 let create reader_list = 
   let stub = foreign "zpoller_new"
-    (ptr void @-> returning (ptr Structs._zpoller_t))
-  in
-  let stub2 = foreign "zpoller_new"
     (ptr void @-> ptr void @-> returning (ptr Structs._zpoller_t))
   in
-  let stub3 = foreign "zpoller_new"
+  let stub2 = foreign "zpoller_new"
     (ptr void @-> ptr void @-> ptr void @-> returning (ptr Structs._zpoller_t))
   in
-  let stub4 = foreign "zpoller_new"
+  let stub3 = foreign "zpoller_new"
     (ptr void @-> ptr void @-> ptr void @-> ptr void @-> returning (ptr Structs._zpoller_t))
   in
-  let stub5 = foreign "zpoller_new"
+  let stub4 = foreign "zpoller_new"
     (ptr void @-> ptr void @-> ptr void @-> ptr void @-> ptr void @-> returning (ptr Structs._zpoller_t))
   in
+  let stub5 = foreign "zpoller_new"
+    (ptr void @-> ptr void @-> ptr void @-> ptr void @-> ptr void @-> ptr void @-> returning (ptr Structs._zpoller_t))
+  in
   match List.length reader_list with 
-  | 1 -> stub (List.nth reader_list 0)
-  | 2 -> stub2 (List.nth reader_list 0) (List.nth reader_list 1)
-  | 3 -> stub3 (List.nth reader_list 0) (List.nth reader_list 1) (List.nth reader_list 2)
+  | 1 -> stub (List.nth reader_list 0) Ctypes.null
+  | 2 -> stub2 (List.nth reader_list 0) (List.nth reader_list 1) Ctypes.null
+  | 3 -> stub3 (List.nth reader_list 0) (List.nth reader_list 1) (List.nth reader_list 2) Ctypes.null
   | 4 -> stub4 (List.nth reader_list 0) (List.nth reader_list 1) (List.nth reader_list 2)
-    (List.nth reader_list 3)
+    (List.nth reader_list 3) Ctypes.null
   | 5 -> stub5 (List.nth reader_list 0) (List.nth reader_list 1) (List.nth reader_list 2)
-    (List.nth reader_list 3) (List.nth reader_list 4)
+    (List.nth reader_list 3) (List.nth reader_list 4) Ctypes.null
   | _ -> raise (General_Error "To many readers")
 
 let wait sockets timeout = 
   let stub = foreign "zpoller_wait" ((ptr Structs._zpoller_t) @-> int @-> returning (ptr void))
   in
   match stub sockets timeout with
-  | null -> None
+  | null when null = Ctypes.null -> None
   | x -> Some x
 
 let expired self = 
