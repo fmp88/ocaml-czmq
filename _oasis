@@ -16,7 +16,8 @@ Library "czmq"
   Path:       lib
   BuildTools: ocamlbuild
   Modules:    Czmq
-  InternalModules: Context,
+  InternalModules: Structs, 
+              Context,
               Socket,
               Poller,
               Directory,
@@ -28,7 +29,7 @@ Library "czmq"
               Clock,
               Frame,
               Msg
-#             Sys Structs, 
+#             Sys 
   CSources:   czmq.c
   CCOpt:      -cclib,-Xlinker,-cclib,-no-as-needed,-Wl 
   CCLib:      -lsodium -lczmq -lzmq 
