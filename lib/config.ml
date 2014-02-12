@@ -28,50 +28,51 @@ open PosixTypes
 open Foreign
 open Unsigned
 
-type t = Structs.zconfig_t Ctypes.structure Ctypes.ptr 
+type t = unit ptr
+let config : t typ = ptr void
 
 let create = foreign "zconfig_new"
-  (string @-> (ptr Structs._zconfig_t) @-> returning (ptr Structs._zconfig_t))
+  (string @-> ptr void @-> returning config)
 
 let name = foreign "zconfig_name"
-  ((ptr Structs._zconfig_t) @-> returning string)
+  (config @-> returning string)
 
 let value = foreign "zconfig_value"
-  ((ptr Structs._zconfig_t) @-> returning string)
+  (config @-> returning string)
 
 let put = foreign "zconfig_put"
-  ((ptr Structs._zconfig_t) @-> string @-> string @-> returning void)
+  (config @-> string @-> string @-> returning void)
 
 let set_name = foreign "zconfig_set_name"
-  ((ptr Structs._zconfig_t) @-> string @-> returning void)
+  (config @-> string @-> returning void)
 
 let set_value = foreign "zconfig_set_value"
-  ((ptr Structs._zconfig_t) @-> string @-> returning void)
+  (config @-> string @-> returning void)
 
 let child = foreign "zconfig_child"
-  ((ptr Structs._zconfig_t) @-> returning (ptr Structs._zconfig_t))
+  (config @-> returning config)
 
 let next = foreign "zconfig_next"
-  ((ptr Structs._zconfig_t) @-> returning (ptr Structs._zconfig_t))
+  (config @-> returning config)
 
 let locate = foreign "zconfig_locate"
-  ((ptr Structs._zconfig_t) @-> string @-> returning (ptr Structs._zconfig_t))
+  (config @-> string @-> returning config)
 
 let resolve = foreign "zconfig_resolve"
-  ((ptr Structs._zconfig_t) @-> string @-> string @-> returning string)
+  (config @-> string @-> string @-> returning string)
 (*
 let set_path = foreign "zconfig_set_path"
   ((ptr Structs._zconfig_t) @-> string @-> string @-> returning void)
 *)
 let at_depth = foreign "zconfig_at_depth"
-  ((ptr Structs._zconfig_t) @-> int @-> returning (ptr Structs._zconfig_t))
+  (config @-> int @-> returning config)
 
 let comment = foreign "zconfig_comment"
-  ((ptr Structs._zconfig_t) @-> string @-> returning void)
+  (config @-> string @-> returning void)
 
 let load = foreign "zconfig_load"
-  (string @-> returning (ptr Structs._zconfig_t))
+  (string @-> returning config)
 
 let dump = foreign "zconfig_dump"
-  ((ptr Structs._zconfig_t) @-> returning void)
+  (config @-> returning void)
 

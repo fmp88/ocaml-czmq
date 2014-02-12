@@ -40,7 +40,7 @@ let version () =
 
 module Context = Context
 module Socket = Socket
-module Str = Str
+(*module Str = Str*)
 module Auth = Auth
 module Beacon = Beacon
 module Cert = Cert
@@ -50,3 +50,5 @@ module Directory = Directory
 module Poller = Poller
 (*module Sys = Sys*)
 module Config = Config
+module Frame = Frame
+module Msg = Msg

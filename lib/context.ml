@@ -28,43 +28,44 @@ open PosixTypes
 open Foreign
 open Unsigned
 
-type t = Structs.zctx_t Ctypes.structure Ctypes.ptr 
+type t = unit ptr
+let ctx : t typ = ptr void
 
 let create = foreign "zctx_new" 
-  (void @-> returning (ptr Structs._zctx_t))
+  (void @-> returning ctx)
 
 let destroy = 
   let destroy_stub = foreign "zctx_destroy" 
-    (ptr Structs._zctx_t @-> returning void)
+    (ctx @-> returning void)
   in destroy_stub
 
 let set_io_threads =
   let set_stub = foreign "zctx_set_iothreads" 
-    (ptr Structs._zctx_t @-> int @-> returning void)
+    (ctx @-> int @-> returning void)
   in
   set_stub
   
 let set_linger =
   let set_stub = foreign "zctx_set_linger" 
-    (ptr Structs._zctx_t @-> int @-> returning void)
+    (ctx @-> int @-> returning void)
   in
   set_stub
   
 let set_pipehwm =
   let set_stub = foreign "zctx_set_pipehwm" 
-    (ptr Structs._zctx_t @-> int @-> returning void)
+    (ctx @-> int @-> returning void)
   in
   set_stub
   
 let set_sndhwm =
   let set_stub = foreign "zctx_set_sndhwm" 
-    (ptr Structs._zctx_t @-> int @-> returning void)
+    (ctx @-> int @-> returning void)
   in
   set_stub
   
 let set_rcvhwm =
   let set_stub = foreign "zctx_set_rcvhwm" 
-    (ptr Structs._zctx_t @-> int @-> returning void)
+    (ctx @-> int @-> returning void)
   in
   set_stub
 

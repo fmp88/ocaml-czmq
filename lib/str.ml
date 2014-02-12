@@ -29,12 +29,22 @@ open Foreign
 open Unsigned
 
 let recv socket = 
-  let stub = foreign "zstr_recv"
-    ((ptr void) @-> returning string_opt)
-  in
-  match stub socket with
-  | None -> exit 2;
-  | Some x -> x
+  match Socket.rcvmore socket with 
+  | true -> let rec collect acc = 
+    print_endline (string_of_int (List.length acc));
+    match Socket.rcvmore socket with
+    | true  -> let next_part = recv socket in 
+               collect (acc@[next_part])
+    | false -> print_endline "before last msg part";
+               let last_part = recv socket in 
+               Printf.printf "Last msg: %s" last_part;
+               acc@[last_part]
+    in
+  Multipart (collect [])
+  | false -> let stub = foreign "zstr_recv"
+    ((ptr void) @-> returning string)
+    in
+  Singlepart (stub socket)
 
 let recv_nowait socket = 
   let stub = foreign "zstr_recv_nowait"
@@ -44,11 +54,11 @@ let recv_nowait socket =
   | None -> exit 2;
   | Some x -> x
 
-let send ctx msg= 
+let send ctx m = 
   let send_stub = foreign "zstr_send"
     ((ptr void) @-> string @-> returning int)
   in
-  match send_stub ctx msg with
+  match send_stub ctx m with
   | _ -> () 
 
 let sendm ctx msg = 
@@ -59,17 +69,23 @@ let sendm ctx msg =
   | _ -> ()
 
 let sendx socket msg_list =
-  let rec iter = function
+  let rec loop = function
   | []    -> ()
   | x::[] -> send socket x
   | x::y  -> sendm socket x;
-            iter y
+             loop y
   in
-  iter msg_list
+  loop msg_list
 
 let recvx socket =
-  let rec collect acc = match Socket.rcvmore socket with
-  | false -> acc@[recv socket]
-  | true  -> collect (acc@[recv socket])
+  let rec collect acc = 
+    print_endline (string_of_int (List.length acc));
+    match Socket.rcvmore socket with
+    | true  -> let next_part = recv socket in 
+               collect (acc@[next_part])
+    | false -> print_endline "before last msg part";
+               let last_part = recv socket in 
+               Printf.printf "Last msg: %s" last_part;
+               acc@[last_part]
   in
   collect []

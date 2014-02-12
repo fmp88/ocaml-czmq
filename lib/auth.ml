@@ -28,10 +28,11 @@ open PosixTypes
 open Foreign
 open Unsigned
 
-type t = Structs.zauth_t Ctypes.structure Ctypes.ptr 
+type t = unit ptr
+let auth : t typ = ptr void
 
 let create = foreign "zauth_new"
-  ((ptr Structs._zctx_t) @-> returning (ptr Structs._zauth_t))
+  (ptr void @-> returning auth)
 (*
 let destroy authenticator = 
   let destroy_stub = foreign "zauth_destroy"
@@ -40,22 +41,22 @@ let destroy authenticator =
   destroy_stub (addr authenticator) 
 *)
 let allow = foreign "zauth_allow"
-  ((ptr Structs._zauth_t) @-> string @-> returning void)
+  (auth @-> string @-> returning void)
 
 let deny = foreign "zauth_deny"
-  ((ptr Structs._zauth_t) @-> string @-> returning void)
+  (auth @-> string @-> returning void)
 
 let configure_plain = foreign "zauth_configure_plain"
-  ((ptr Structs._zauth_t) @-> string @-> string @-> returning void)
+  (auth @-> string @-> string @-> returning void)
   
 let configure_curve = foreign "zauth_configure_curve"
-  ((ptr Structs._zauth_t) @-> string @-> string @-> returning void)
+  (auth @-> string @-> string @-> returning void)
 
-let set_verbose auth flag = 
+let set_verbose a flag = 
   let stub = foreign "zauth_set_verbose"
-    ((ptr Structs._zauth_t) @-> int @-> returning void)
+    (auth @-> int @-> returning void)
   in
   match flag with 
-  | true -> stub auth 1
-  | false -> stub auth 0
+  | true -> stub a 1
+  | false -> stub a 0
 

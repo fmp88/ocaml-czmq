@@ -141,21 +141,17 @@ module Socket : sig
   val set_sndtimeo : kind t -> int -> unit
 
 end
-
+(*
 module Str : sig
 
-  val recv : Socket.kind Socket.t -> string
+  val recv : Socket.kind Socket.t -> Msg.t list
 
-  val recv_nowait : Socket.kind Socket.t -> string
+  val recv_nowait : Socket.kind Socket.t -> Msg.t list
 
-  val send : Socket.kind Socket.t -> string -> unit
-
-  val sendx : Socket.kind Socket.t -> string list -> unit
-
-  val recvx : Socket.kind Socket.t -> string list
+  val send : Socket.kind Socket.t -> Msg.t list -> unit
 
 end
-
+*)
 module Auth : sig
 
   type t 
@@ -332,12 +328,44 @@ module Config : sig
 
 end
 
-(*
-module Thread : sig
-(*
-  val create : 
+module Frame : sig
 
-  val fork : 
+  type t 
+
+  type flags = Last | More | Dontwait | More_Dontwait
+
+  val create : string -> t
+
+  val data : t -> string
+ 
+  val recv : Socket.kind Socket.t -> t option
+
+  val recv_nowait : Socket.kind Socket.t -> t option
+
+  val send : t -> Socket.kind Socket.t -> ?flag:flags -> int
+
+  val strhex : t -> string
+
+end
+
+module Msg : sig
+ 
+  type t
+  
+  val create : unit -> t
+
+  val push : t -> Frame.t -> unit 
+
+  val pop : t -> Frame.t option
+
+  val append : t -> Frame.t -> unit
+
+  val wrap : t -> Frame.t -> unit
+
+  val recv : Socket.kind Socket.t -> t
+
+  val send : t -> Socket.kind Socket.t -> unit
+(*
+  val unwrap : t -> t option
 *)
 end
-*)

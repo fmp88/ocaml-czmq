@@ -37,7 +37,7 @@ type kind = [`Req | `Rep | `Dealer | `Router | `Pub | `Sub | `XPub | `XSub |
 
 let create ctx kind = 
   let create_stub = foreign "zsocket_new" 
-    (ptr Structs._zctx_t @-> int @-> returning (ptr void))
+    (ptr void @-> int @-> returning (ptr void))
   in
   let c_kind = match kind with
   | `Pair -> 0
@@ -56,7 +56,7 @@ let create ctx kind =
 
 let destroy = 
   let destroy_stub = foreign "zsocket_destroy" 
-    (ptr Structs._zctx_t @-> ptr void @-> returning void) 
+    (ptr void @-> ptr void @-> returning void) 
   in
   destroy_stub
 
@@ -250,8 +250,8 @@ let rcvmore socket =
     ((ptr void) @-> returning int)
   in 
   match stub socket with
-  | 0 -> false
-  | _ -> true
+  | 0 -> print_endline "rcvmore: false";false
+  | _ -> print_endline "rcvmore: true";true
 
 let fd = foreign "zsocket_fd"
     ((ptr void) @-> returning int)
