@@ -10,16 +10,14 @@ BuildDepends:
   ctypes.foreign,
   threads
 
-PreInstallCommand: cc -shared -o _build/src/dllczmq_stubs.so -lczmq -lzmq -lsodium
+PreInstallCommand: cc -shared -o _build/lib/dllczmq_stubs.so -lsodium -lczmq -lzmq 
 
 Library "czmq"
-  Path:       src
+  Path:       lib
   BuildTools: ocamlbuild
   Modules:    Czmq
-  InternalModules: Structs,
-              Context,
+  InternalModules: Context,
               Socket,
-              Str,
               Poller,
               Directory,
               Auth, 
@@ -27,8 +25,11 @@ Library "czmq"
               Cert, 
               Certstore, 
               Config,
-              Clock
-#             Sys
+              Clock,
+              Frame,
+              Msg
+#             Sys Structs, 
   CSources:   czmq.c
-  CCLib:      -Wl,-no-as-needed -lczmq -lzmq -lsodium
+  CCOpt:      -cclib,-Xlinker,-cclib,-no-as-needed,-Wl 
+  CCLib:      -lsodium -lczmq -lzmq 
   DllLib:     -lczmq_stubs
