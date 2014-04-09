@@ -31,32 +31,32 @@ open Unsigned
 exception General_Error of string
 
 type 'kind t = unit ptr
- 
+
 type kind = [`Req | `Rep | `Dealer | `Router | `Pub | `Sub | `XPub | `XSub |
              `Push | `Pull | `Pair]
 
 let create ctx kind = 
   let create_stub = foreign "zsocket_new" 
-    (ptr Structs._zctx_t @-> int @-> returning (ptr void))
+      (ptr void @-> int @-> returning (ptr void))
   in
   let c_kind = match kind with
-  | `Pair -> 0
-  | `Pub -> 1
-  | `Sub -> 2
-  | `Req -> 3
-  | `Rep -> 4
-  | `Dealer -> 5
-  | `Router -> 6
-  | `Pull -> 7
-  | `Push -> 8
-  | `XPub -> 9
-  | `XSub -> 10
+    | `Pair -> 0
+    | `Pub -> 1
+    | `Sub -> 2
+    | `Req -> 3
+    | `Rep -> 4
+    | `Dealer -> 5
+    | `Router -> 6
+    | `Pull -> 7
+    | `Push -> 8
+    | `XPub -> 9
+    | `XSub -> 10
   in
   create_stub ctx c_kind
 
 let destroy = 
   let destroy_stub = foreign "zsocket_destroy" 
-    (ptr Structs._zctx_t @-> ptr void @-> returning void) 
+      (ptr void @-> ptr void @-> returning void) 
   in
   destroy_stub
 
@@ -81,7 +81,7 @@ let connect ctx name =
 
 let disconnect ctx name = 
   let disconnect_stub = foreign "zsocket_disconnect" 
-    (ptr void @-> string @-> returning int)
+      (ptr void @-> string @-> returning int)
   in
   match disconnect_stub ctx name with
   | 0 -> ()
@@ -89,25 +89,25 @@ let disconnect ctx name =
 
 let poll socket msecs = 
   let stub = foreign "zsocket_poll"
-    ((ptr void) @-> int @-> returning int)
+      ((ptr void) @-> int @-> returning int)
   in
   match stub socket msecs with
   | 0 -> false
   | _ -> true
 
 let type_str = foreign "zsocket_type_str"
-  ((ptr void) @-> returning string)
-  
+    ((ptr void) @-> returning string)
+
 type snd_flag = None | Dontwait | Sndmore | Dontwait_Sndmore
 let send socket ?flag:(flag=None) m = 
   let c_flag = match flag with
-  | None -> 0
-  | Dontwait -> 1
-  | Sndmore -> 2
-  | Dontwait_Sndmore-> 42
+    | None -> 0
+    | Dontwait -> 1
+    | Sndmore -> 2
+    | Dontwait_Sndmore-> 42
   in
   let send_stub = foreign "zsocket_sendmem" 
-    (ptr void @-> string @-> size_t @-> int @-> returning int)
+      (ptr void @-> string @-> size_t @-> int @-> returning int)
   in
   let msg_size = Size_t.of_int (String.length m) in
   match send_stub socket m msg_size c_flag with
@@ -117,18 +117,18 @@ let send socket ?flag:(flag=None) m =
 type recv_flag = None | Dontwait
 let recv ?flag:(flag=None) socket =
   let c_flag = match flag with
-  | None -> 0
-  | Dontwait -> 1
+    | None -> 0
+    | Dontwait -> 1
   in
   let recv_stub = foreign "zstr_recv" 
-    (ptr void @-> returning string)
+      (ptr void @-> returning string)
   in
   recv_stub socket
 
 (* Get socket options *)
 let ipv6 socket = 
   let stub = foreign "zsocket_ipv6"
-    ((ptr void) @-> returning int)
+      ((ptr void) @-> returning int)
   in
   match stub socket with
   | 0 -> false
@@ -136,7 +136,7 @@ let ipv6 socket =
 
 let ipv4only socket = 
   let stub = foreign "zsocket_ipv4only"
-    ((ptr void) @-> returning int)
+      ((ptr void) @-> returning int)
   in
   match stub socket with
   | 0 -> false
@@ -144,7 +144,7 @@ let ipv4only socket =
 
 let probe_router socket = 
   let stub = foreign "zsocket_probe_router"
-    ((ptr void) @-> returning int)
+      ((ptr void) @-> returning int)
   in
   match stub socket with
   | 0 -> false
@@ -152,7 +152,7 @@ let probe_router socket =
 
 let plain_server socket = 
   let stub = foreign "zsocket_plain_server"
-    ((ptr void) @-> returning int)
+      ((ptr void) @-> returning int)
   in
   match stub socket with
   | 0 -> false
@@ -247,7 +247,7 @@ let tcp_accept_filter = foreign "zsocket_tcp_accept_filter"
 
 let rcvmore socket = 
   let stub = foreign "zsocket_rcvmore"
-    ((ptr void) @-> returning int)
+      ((ptr void) @-> returning int)
   in 
   match stub socket with
   | 0 -> false
@@ -265,140 +265,140 @@ let last_endpoint = foreign "zsocket_last_endpoint"
 (* Set socket options *)
 let set_ipv6 socket flag = 
   let stub = foreign "zsocket_set_ipv6"
-    ((ptr void) @-> int @-> returning void)
+      ((ptr void) @-> int @-> returning void)
   in
   match flag with
   | false -> stub socket 0
   | true -> stub socket 1
 
 let set_immediate = foreign "zsocket_set_immediate"
-  (ptr void @-> int @-> returning void)
+    (ptr void @-> int @-> returning void)
 
 let set_router_raw = foreign "zsocket_set_router_raw"
-  (ptr void @-> int @-> returning void)
+    (ptr void @-> int @-> returning void)
 
 let set_ipv4only = foreign "zsocket_set_ipv4only"
-  (ptr void @-> int @-> returning void)
+    (ptr void @-> int @-> returning void)
 
 let set_delay_attach_on_connect = foreign "zsocket_set_delay_attach_on_connect"
-  (ptr void @-> int @-> returning void)
+    (ptr void @-> int @-> returning void)
 
 let set_router_mandatory = foreign "zsocket_set_router_mandatory"
-  (ptr void @-> int @-> returning void)
+    (ptr void @-> int @-> returning void)
 
 let set_req_relaxed = foreign "zsocket_set_req_relaxed"
-  (ptr void @-> int @-> returning void)
+    (ptr void @-> int @-> returning void)
 
 let set_req_correlate = foreign "zsocket_set_req_correlate"
-  (ptr void @-> int @-> returning void)
+    (ptr void @-> int @-> returning void)
 
 let set_conflate = foreign "zsocket_set_conflate"
-  (ptr void @-> int @-> returning void)
+    (ptr void @-> int @-> returning void)
 
 let set_plain_server = foreign "zsocket_set_plain_server"
-  ((ptr void) @-> int @-> returning void)
+    ((ptr void) @-> int @-> returning void)
 
 let set_plain_username = foreign "zsocket_set_plain_username"
-  ((ptr void) @-> string @-> returning void)
+    ((ptr void) @-> string @-> returning void)
 
 let set_plain_password = foreign "zsocket_set_plain_password"
-  ((ptr void) @-> string @-> returning void)
+    ((ptr void) @-> string @-> returning void)
 
 let set_curve_server socket flag = 
   let stub = foreign "zsocket_set_curve_server"
-    ((ptr void) @-> int @-> returning void)
+      ((ptr void) @-> int @-> returning void)
   in
   match flag with 
   | true -> stub socket 1
   | false -> stub socket 0
- 
+
 let set_curve_publickey = foreign "zsocket_set_curve_publickey"
-  ((ptr void) @-> string @-> returning void)
+    ((ptr void) @-> string @-> returning void)
 (*
 let set_curve_publickey_bin = foreign "zsocket_set_curve_publickey_bin"
   ((ptr void) @-> string @-> returning void)
 *)
 let set_curve_secretkey = foreign "zsocket_set_curve_secretkey"
-  ((ptr void) @-> string @-> returning void)
+    ((ptr void) @-> string @-> returning void)
 (*
 let set_curve_secretkey_bin = foreign "zsocket_set_curve_secretkey_bin"
   ((ptr void) @-> string @-> returning void)
 *)
 let set_curve_serverkey = foreign "zsocket_set_curve_serverkey"
-  ((ptr void) @-> string @-> returning void)
+    ((ptr void) @-> string @-> returning void)
 
 let set_zap_domain = foreign "zsocket_set_zap_domain"
-  ((ptr void) @-> string @-> returning void)
+    ((ptr void) @-> string @-> returning void)
 
 let set_sndhwm = foreign "zsocket_set_sndhwm"
-  (ptr void @-> int @-> returning void)
+    (ptr void @-> int @-> returning void)
 
 let set_rcvhwm = foreign "zsocket_set_rcvhwm"
-  (ptr void @-> int @-> returning void)
+    (ptr void @-> int @-> returning void)
 
 let set_affinity = foreign "zsocket_set_affinity"
-  (ptr void @-> int @-> returning void)
+    (ptr void @-> int @-> returning void)
 
 let set_subscribe = foreign "zsocket_set_subscribe"
-  (ptr void @-> string @-> returning void)
+    (ptr void @-> string @-> returning void)
 
 let set_unsubscribe = foreign "zsocket_set_unsubscribe"
-  (ptr void @-> string @-> returning void)
+    (ptr void @-> string @-> returning void)
 
 let set_identity = foreign "zsocket_set_identity"
-  (ptr void @-> string @-> returning void)
+    (ptr void @-> string @-> returning void)
 
 let set_rate = foreign "zsocket_set_rate"
-  (ptr void @-> int @-> returning void)
+    (ptr void @-> int @-> returning void)
 
 let set_recovery_ivl = foreign "zsocket_set_recovery_ivl"
-  (ptr void @-> int @-> returning void)
+    (ptr void @-> int @-> returning void)
 
 let set_sndbuf = foreign "zsocket_set_sndbuf"
-  (ptr void @-> int @-> returning void)
+    (ptr void @-> int @-> returning void)
 
 let set_rcvbuf = foreign "zsocket_set_rcvbuf"
-  (ptr void @-> int @-> returning void)
+    (ptr void @-> int @-> returning void)
 
 let set_linger = foreign "zsocket_set_linger"
-  (ptr void @-> int @-> returning void)
+    (ptr void @-> int @-> returning void)
 
 let set_reconnect_ivl = foreign "zsocket_set_reconnect_ivl"
-  (ptr void @-> int @-> returning void)
+    (ptr void @-> int @-> returning void)
 
 let set_reconnect_ivl_max = foreign "zsocket_set_reconnect_ivl_max"
-  (ptr void @-> int @-> returning void)
+    (ptr void @-> int @-> returning void)
 
 let set_backlog = foreign "zsocket_set_backlog"
-  (ptr void @-> int @-> returning void)
+    (ptr void @-> int @-> returning void)
 
 let set_maxmsgsize = foreign "zsocket_set_maxmsgsize"
-  (ptr void @-> int @-> returning void)
+    (ptr void @-> int @-> returning void)
 
 let set_multicast_hops = foreign "zsocket_set_multicast_hops"
-  (ptr void @-> int @-> returning void)
+    (ptr void @-> int @-> returning void)
 
 let set_rcvtimeo = foreign "zsocket_set_rcvtimeo"
-  (ptr void @-> int @-> returning void)
+    (ptr void @-> int @-> returning void)
 
 let set_sndtimeo = foreign "zsocket_set_sndtimeo"
-  (ptr void @-> int @-> returning void)
+    (ptr void @-> int @-> returning void)
 
 let set_xpub_verbose = foreign "zsocket_set_xpub_verbose"
-  (ptr void @-> int @-> returning void)
+    (ptr void @-> int @-> returning void)
 
 let set_tcp_keepalive = foreign "zsocket_set_tcp_keepalive"
-  (ptr void @-> int @-> returning void)
+    (ptr void @-> int @-> returning void)
 
 let set_tcp_keepalive_idle = foreign "zsocket_set_tcp_keepalive_idle"
-  (ptr void @-> int @-> returning void)
+    (ptr void @-> int @-> returning void)
 
 let set_tcp_keepalive_cnt = foreign "zsocket_set_tcp_keepalive_cnt"
-  (ptr void @-> int @-> returning void)
+    (ptr void @-> int @-> returning void)
 
 let set_tcp_keepalive_intvl = foreign "zsocket_set_tcp_keepalive_intvl"
-  (ptr void @-> int @-> returning void)
+    (ptr void @-> int @-> returning void)
 
 let set_tcp_accept_filter = foreign "zsocket_set_tcp_accept_filter"
-  (ptr void @-> string @-> returning void)
+    (ptr void @-> string @-> returning void)
 
