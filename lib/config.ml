@@ -28,50 +28,53 @@ open PosixTypes
 open Foreign
 open Unsigned
 
-type t = Structs.zconfig_t Ctypes.structure Ctypes.ptr 
+type t = Czmq_structs.zconfig_t Ctypes.structure Ctypes.ptr 
 
 let create = foreign "zconfig_new"
-  (string @-> (ptr Structs._zconfig_t) @-> returning (ptr Structs._zconfig_t))
+    (string @-> (ptr Czmq_structs._zconfig_t) @-> returning (ptr Czmq_structs._zconfig_t))
 
 let name = foreign "zconfig_name"
-  ((ptr Structs._zconfig_t) @-> returning string)
+    ((ptr Czmq_structs._zconfig_t) @-> returning string)
 
 let value = foreign "zconfig_value"
-  ((ptr Structs._zconfig_t) @-> returning string)
+    ((ptr Czmq_structs._zconfig_t) @-> returning string)
 
 let put = foreign "zconfig_put"
-  ((ptr Structs._zconfig_t) @-> string @-> string @-> returning void)
+    ((ptr Czmq_structs._zconfig_t) @-> string @-> string @-> returning void)
 
 let set_name = foreign "zconfig_set_name"
-  ((ptr Structs._zconfig_t) @-> string @-> returning void)
+    ((ptr Czmq_structs._zconfig_t) @-> string @-> returning void)
 
 let set_value = foreign "zconfig_set_value"
-  ((ptr Structs._zconfig_t) @-> string @-> returning void)
+    ((ptr Czmq_structs._zconfig_t) @-> string @-> returning void)
 
 let child = foreign "zconfig_child"
-  ((ptr Structs._zconfig_t) @-> returning (ptr Structs._zconfig_t))
+    ((ptr Czmq_structs._zconfig_t) @-> returning (ptr Czmq_structs._zconfig_t))
 
 let next = foreign "zconfig_next"
-  ((ptr Structs._zconfig_t) @-> returning (ptr Structs._zconfig_t))
+    ((ptr Czmq_structs._zconfig_t) @-> returning (ptr Czmq_structs._zconfig_t))
 
 let locate = foreign "zconfig_locate"
-  ((ptr Structs._zconfig_t) @-> string @-> returning (ptr Structs._zconfig_t))
+    ((ptr Czmq_structs._zconfig_t) @-> string @-> returning (ptr Czmq_structs._zconfig_t))
 
 let resolve = foreign "zconfig_resolve"
-  ((ptr Structs._zconfig_t) @-> string @-> string @-> returning string)
+    ((ptr Czmq_structs._zconfig_t) @-> string @-> string @-> returning string)
 (*
 let set_path = foreign "zconfig_set_path"
-  ((ptr Structs._zconfig_t) @-> string @-> string @-> returning void)
+  ((ptr Czmq_structs._zconfig_t) @-> string @-> string @-> returning void)
 *)
 let at_depth = foreign "zconfig_at_depth"
-  ((ptr Structs._zconfig_t) @-> int @-> returning (ptr Structs._zconfig_t))
+    ((ptr Czmq_structs._zconfig_t) @-> int @-> returning (ptr Czmq_structs._zconfig_t))
 
+(*
 let comment = foreign "zconfig_comment"
-  ((ptr Structs._zconfig_t) @-> string @-> returning void)
-
+  ((ptr Czmq_structs._zconfig_t) @-> string @-> returning void)
+*)
 let load = foreign "zconfig_load"
-  (string @-> returning (ptr Structs._zconfig_t))
+    (string @-> returning (ptr Czmq_structs._zconfig_t))
 
+(*
 let dump = foreign "zconfig_dump"
-  ((ptr Structs._zconfig_t) @-> returning void)
+  ((ptr Czmq_structs._zconfig_t) @-> returning void)
+*)
 

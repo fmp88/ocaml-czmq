@@ -9,9 +9,9 @@ module type Ser = sig
 end
 
 module Make (S : Ser ) = struct 
- 
+
   type t = S.t
-  
+
   let send socket msg = Str.send socket (S.encode msg)
 
   let sendm socket msg = Str.sendm socket (S.encode msg)

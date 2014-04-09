@@ -28,34 +28,15 @@ open PosixTypes
 open Foreign
 open Unsigned
 
-type t = Structs.zauth_t Ctypes.structure Ctypes.ptr 
+type t = Czmq_structs.zdir_t Ctypes.structure Ctypes.ptr 
 
-let create = foreign "zauth_new"
-  ((ptr Structs._zctx_t) @-> returning (ptr Structs._zauth_t))
+let create = foreign "zdir_new"
+    (string @-> string @-> returning (ptr Czmq_structs._zdir_t))
+
+let path = foreign "zdir_path"
+    ((ptr Czmq_structs._zdir_t) @-> returning string)
+
 (*
-let destroy authenticator = 
-  let destroy_stub = foreign "zauth_destroy"
-    (ptr (ptr Structs._zctx_t) @-> returning void)
-  in
-  destroy_stub (addr authenticator) 
+let dump = foreign "zdir_dump"
+  ((ptr Czmq_structs._zdir_t) @-> int @-> returning void)
 *)
-let allow = foreign "zauth_allow"
-  ((ptr Structs._zauth_t) @-> string @-> returning void)
-
-let deny = foreign "zauth_deny"
-  ((ptr Structs._zauth_t) @-> string @-> returning void)
-
-let configure_plain = foreign "zauth_configure_plain"
-  ((ptr Structs._zauth_t) @-> string @-> string @-> returning void)
-  
-let configure_curve = foreign "zauth_configure_curve"
-  ((ptr Structs._zauth_t) @-> string @-> string @-> returning void)
-
-let set_verbose auth flag = 
-  let stub = foreign "zauth_set_verbose"
-    ((ptr Structs._zauth_t) @-> int @-> returning void)
-  in
-  match flag with 
-  | true -> stub auth 1
-  | false -> stub auth 0
-

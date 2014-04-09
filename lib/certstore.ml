@@ -28,13 +28,18 @@ open PosixTypes
 open Foreign
 open Unsigned
 
-type t = Structs.zdir_t Ctypes.structure Ctypes.ptr 
+type t = Czmq_structs.zcertstore_t Ctypes.structure Ctypes.ptr 
 
-let create = foreign "zdir_new"
-  (string @-> string @-> returning (ptr Structs._zdir_t))
+let create = foreign "zcertstore_new"
+    (string @-> returning (ptr Czmq_structs._zcertstore_t))
+(*
+let destroy = foreign
 
-let path = foreign "zdir_path"
-  ((ptr Structs._zdir_t) @-> returning string)
+let lookup = foreign "zcertstore_lookup"
+  ((ptr Structs._zcertstore_t) @-> string @-> returning (ptr Structs._zcert_t))
 
-let dump = foreign "zdir_dump"
-  ((ptr Structs._zdir_t) @-> int @-> returning void)
+let insert = foreign "zcertstore_insert"
+  (
+let dump = foreign "zcertstore_dump"
+  ((ptr Structs._zcertstore_t) @-> returning void)
+*)

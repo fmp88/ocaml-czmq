@@ -28,37 +28,42 @@ open PosixTypes
 open Foreign
 open Unsigned
 
-let set_interface = foreign "zsys_set_interface"
-  (string @-> returning void)
+exception Frame_creation
 
-let interface = foreign "zsys_interface"
-  (void @-> returning string)
+type t = unit ptr
+let zframe : t typ = ptr void
+let zframe_opt : t option typ = ptr_opt void
 
-let file_exists filename = 
-  let stub = foreign "zsys_file_exists"
-    (string @-> returning int)
+type flags = Last | More | Dontwait | More_Dontwait
+
+let create msg = 
+  let stub = foreign "zframe_new"
+      (string @-> size_t @-> returning zframe_opt)
   in
-  match stub filename with
-  | 0 -> false
-  | _ -> true
+  let msg_size =  Size_t.of_int (String.length msg) in
+  match stub msg msg_size with 
+  | None -> raise Frame_creation
+  | Some x -> x
 
-let dir_create path = 
-  let stub = foreign "zsys_dir_create"
-    (string @-> returning int)
+let recv = foreign "zframe_recv"
+    ((ptr void) @-> returning zframe_opt)
+
+let recv_nowait = foreign "zframe_recv_nowait"
+    ((ptr void) @-> returning zframe_opt)
+
+let send (frame : t) socket ?flag:(f=Last) =
+  let fptr = allocate zframe frame in
+  let stub = foreign "zframe_send"
+      (ptr zframe @-> ptr void @-> int @-> returning int)
   in
-  match stub path with 
-  | _ -> ()
+  match f with
+  | Last -> stub fptr socket 0
+  | More -> stub fptr socket 1
+  | Dontwait -> stub fptr socket 4
+  | More_Dontwait -> stub fptr socket 42
 
-let dir_delete path = 
-  let stub = foreign "zsys_dir_delete"
-    (string @-> returning int)
-  in
-  match stub path with
-  | _ -> ()
+let strhex = foreign "zframe_strhex"
+    (ptr void @-> returning string)
 
-let file_mode_private = foreign "zsys_file_mode_private"
-  (void @-> returning void)
-
-let file_mode_default = foreign "zsys_file_mode_default"
-  (void @-> returning void)
+let data = foreign "zframe_strdup" (ptr void @-> returning string)
 

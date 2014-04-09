@@ -28,50 +28,29 @@ open PosixTypes
 open Foreign
 open Unsigned
 
-type t = Structs.zctx_t Ctypes.structure Ctypes.ptr 
+type t = Czmq_structs.zbeacon_t Ctypes.structure Ctypes.ptr 
 
-let create = foreign "zctx_new" 
-  (void @-> returning (ptr Structs._zctx_t))
+let create = foreign "zbeacon_new"
+    (int @-> returning (ptr Czmq_structs._zbeacon_t))
 
-let destroy = 
-  let destroy_stub = foreign "zctx_destroy" 
-    (ptr Structs._zctx_t @-> returning void)
-  in destroy_stub
+let hostname = foreign "zbeacon_hostname"
+    ((ptr Czmq_structs._zbeacon_t) @-> returning string)
 
-let set_io_threads =
-  let set_stub = foreign "zctx_set_iothreads" 
-    (ptr Structs._zctx_t @-> int @-> returning void)
-  in
-  set_stub
-  
-let set_linger =
-  let set_stub = foreign "zctx_set_linger" 
-    (ptr Structs._zctx_t @-> int @-> returning void)
-  in
-  set_stub
-  
-let set_pipehwm =
-  let set_stub = foreign "zctx_set_pipehwm" 
-    (ptr Structs._zctx_t @-> int @-> returning void)
-  in
-  set_stub
-  
-let set_sndhwm =
-  let set_stub = foreign "zctx_set_sndhwm" 
-    (ptr Structs._zctx_t @-> int @-> returning void)
-  in
-  set_stub
-  
-let set_rcvhwm =
-  let set_stub = foreign "zctx_set_rcvhwm" 
-    (ptr Structs._zctx_t @-> int @-> returning void)
-  in
-  set_stub
+let set_interval = foreign "zbeacon_set_interval"
+    ((ptr Czmq_structs._zbeacon_t) @-> int @-> returning void)
 
-let interrupted = 
-  let stub = foreign_value "zctx_interrupted" int
-  in
-  match !@ stub with
-  | 0 -> false
-  | _ -> true
-  
+let noecho = foreign "zbeacon_noecho"
+    ((ptr Czmq_structs._zbeacon_t) @-> returning void)
+
+let silence = foreign "zbeacon_unsubscribe"
+    ((ptr Czmq_structs._zbeacon_t) @-> returning void)
+
+(*
+let publish = foreign "zbeacon_publish"
+  ((ptr _zbeacon_t) @-> 
+*)
+let unsubscribe = foreign "zbeacon_unsubscribe"
+    ((ptr Czmq_structs._zbeacon_t) @-> returning void)
+
+let socket = foreign "zbeacon_socket"
+    ((ptr Czmq_structs._zbeacon_t) @-> returning (ptr void))

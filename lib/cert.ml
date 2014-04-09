@@ -27,12 +27,10 @@ open Ctypes
 open PosixTypes
 open Foreign
 
-include Structs
-
-type t = Structs.zcert_t Ctypes.structure Ctypes.ptr 
+type t = Czmq_structs.zcert_t Ctypes.structure Ctypes.ptr 
 
 let create = foreign "zcert_new"
-  (void @-> returning (ptr Structs._zcert_t))
+    (void @-> returning (ptr Czmq_structs._zcert_t))
 (*
 let destroy certificate = 
   let destroy_stub = foreign "zcert_destroy"
@@ -42,52 +40,54 @@ let destroy certificate =
 *)
 let public_key cert = 
   let stub = foreign "zcert_public_key"
-    ((ptr _zcert_t) @-> returning (ptr uint8_t))
+      ((ptr Czmq_structs._zcert_t) @-> returning (ptr uint8_t))
   in
   Unsigned.UInt8.to_string (!@(stub cert))
 
 let public_txt = foreign "zcert_public_txt"
-  ((ptr _zcert_t) @-> returning string)
+    ((ptr Czmq_structs._zcert_t) @-> returning string)
 
 let secret_txt = foreign "zcert_secret_txt"
-  ((ptr _zcert_t) @-> returning string)
+    ((ptr Czmq_structs._zcert_t) @-> returning string)
 
 let set_meta = foreign "zcert_set_meta"
-  ((ptr _zcert_t) @-> string @-> string @-> returning void)
+    ((ptr Czmq_structs._zcert_t) @-> string @-> string @-> returning void)
 
 let meta = foreign "zcert_meta"
-  ((ptr _zcert_t) @-> string @-> returning string)
+    ((ptr Czmq_structs._zcert_t) @-> string @-> returning string)
 
 let load = foreign "zcert_load"
-  (string @-> returning (ptr _zcert_t))
+    (string @-> returning (ptr Czmq_structs._zcert_t))
 
 let save self filename = 
   let stub = foreign "zcert_save"
-    ((ptr _zcert_t) @-> string @-> returning int) 
+      ((ptr Czmq_structs._zcert_t) @-> string @-> returning int) 
   in
   match stub self filename with 
   | _ -> ()
 
 let save_public self filename = 
   let stub = foreign "zcert_save_public"
-    ((ptr _zcert_t) @-> string @-> returning int)
+      ((ptr Czmq_structs._zcert_t) @-> string @-> returning int)
   in
   match stub self filename with
   | _ -> ()
 
 let apply = foreign "zcert_apply"
-  ((ptr _zcert_t) @-> ptr void @-> returning void)
+    ((ptr Czmq_structs._zcert_t) @-> ptr void @-> returning void)
 
 let dup = foreign "zcert_dup"
-  ((ptr _zcert_t) @-> returning (ptr _zcert_t))
+    ((ptr Czmq_structs._zcert_t) @-> returning (ptr Czmq_structs._zcert_t))
 
 let eq self compare = 
   let stub = foreign "zcert_eq"
-    ((ptr _zcert_t) @-> (ptr _zcert_t) @-> returning int)
+      ((ptr Czmq_structs._zcert_t) @-> (ptr Czmq_structs._zcert_t) @-> returning int)
   in
   match stub self compare with
   | 0 -> false
   | _ -> true
 
+(*
 let dump = foreign "zcert_dump"
   ((ptr _zcert_t) @-> returning void)
+*)

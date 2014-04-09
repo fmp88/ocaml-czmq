@@ -28,18 +28,14 @@ open PosixTypes
 open Foreign
 open Unsigned
 
-type t = Structs.zcertstore_t Ctypes.structure Ctypes.ptr 
+let sleep = foreign "zclock_sleep"
+    (int @-> returning void)
 
-let create = foreign "zcertstore_new"
-  (string @-> returning (ptr Structs._zcertstore_t))
-(*
-let destroy = foreign
+let time = foreign "zclock_time"
+    (void @-> returning int64_t)
 
-let lookup = foreign "zcertstore_lookup"
-  ((ptr Structs._zcertstore_t) @-> string @-> returning (ptr Structs._zcert_t))
+let log = foreign "zclock_log"
+    (string @-> returning void)
 
-let insert = foreign "zcertstore_insert"
-  (
-*)
-let dump = foreign "zcertstore_dump"
-  ((ptr Structs._zcertstore_t) @-> returning void)
+let timestr = foreign "zclock_timestr" 
+    (void @-> returning string)

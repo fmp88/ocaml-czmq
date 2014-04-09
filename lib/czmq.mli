@@ -49,7 +49,7 @@ module Socket : sig
   type 'a t
 
   type kind = [`Req | `Rep | `Dealer | `Router | `Pub | `Sub | `XPub | `XSub |
-             `Push | `Pull | `Pair]
+               `Push | `Pull | `Pair]
 
   val create : Context.t -> kind -> kind t
   val destroy : Context.t -> kind t -> unit
@@ -169,7 +169,7 @@ module Auth : sig
   val deny : t -> string -> unit
 
   val configure_plain : t -> string -> string -> unit
-  
+
   val configure_curve : t -> string -> string -> unit
 
   val set_verbose : t -> bool -> unit
@@ -221,11 +221,11 @@ module Cert : sig
   val save_public : t -> string -> unit
 
   val apply : t -> Socket.kind Socket.t -> unit
- 
+
   val eq : t -> t -> bool
-
+(*
   val dump : t -> unit
-
+*)
 end
 
 module Certstore : sig
@@ -235,8 +235,8 @@ module Certstore : sig
   val create : string -> t
 (*
   val lookup : t -> string -> Cert.t
-*)
   val dump : t -> unit
+*)
 
 end
 
@@ -260,12 +260,14 @@ module Directory : sig
 
   val path : t -> string
 
+(*
   val dump : t -> int -> unit
+*)
 
 end
 (*
 module Sys : sig
-  
+
   val set_interface : string -> unit
 
   val interface : unit -> string
@@ -295,13 +297,13 @@ module Poller : sig
   val terminated : t -> bool
 
 end
-  
+
 module Config : sig
-  
+
   type t
-  
+
   val create : string -> t -> t
- 
+
   val name : t -> string
 
   val value : t -> string
@@ -313,7 +315,7 @@ module Config : sig
   val set_value : t -> string -> unit
 
   val child : t -> t
-  
+
   val next : t -> t
 
   val locate : t -> string -> t
@@ -324,20 +326,56 @@ module Config : sig
 *)
   val at_depth :  t -> int -> t
 
+(*
   val comment : t -> string -> unit
+*)
 
   val load : string -> t
 
+(*
   val dump : t -> unit
+*)
 
 end
 
-(*
-module Thread : sig
-(*
-  val create : 
+module Frame : sig
 
-  val fork : 
+  type t 
+
+  type flags = Last | More | Dontwait | More_Dontwait
+
+  val create : string -> t
+
+  val data : t -> string
+
+  val recv : Socket.kind Socket.t -> t option
+
+  val recv_nowait : Socket.kind Socket.t -> t option
+
+  val send : t -> Socket.kind Socket.t -> ?flag:flags -> int
+
+  val strhex : t -> string
+
+end
+
+module Msg : sig
+
+  type t
+
+  val create : unit -> t
+
+  val push : t -> Frame.t -> unit 
+
+  val pop : t -> Frame.t option
+
+  val append : t -> Frame.t -> unit
+
+  val wrap : t -> Frame.t -> unit
+
+  val recv : Socket.kind Socket.t -> t
+
+  val send : t -> Socket.kind Socket.t -> unit
+(*
+  val unwrap : t -> t option
 *)
 end
-*)

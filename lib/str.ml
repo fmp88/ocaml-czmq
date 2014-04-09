@@ -28,29 +28,48 @@ open PosixTypes
 open Foreign
 open Unsigned
 
-type t = Structs.zbeacon_t Ctypes.structure Ctypes.ptr 
- 
-let create = foreign "zbeacon_new"
-  (int @-> returning (ptr Structs._zbeacon_t))
+let recv socket = 
+  let stub = foreign "zstr_recv"
+      ((ptr void) @-> returning string_opt)
+  in
+  match stub socket with
+  | None -> exit 2;
+  | Some x -> x
 
-let hostname = foreign "zbeacon_hostname"
-  ((ptr Structs._zbeacon_t) @-> returning string)
+let recv_nowait socket = 
+  let stub = foreign "zstr_recv_nowait"
+      ((ptr void) @-> returning string_opt)
+  in
+  match stub socket with
+  | None -> exit 2;
+  | Some x -> x
 
-let set_interval = foreign "zbeacon_set_interval"
-  ((ptr Structs._zbeacon_t) @-> int @-> returning void)
+let send ctx msg= 
+  let send_stub = foreign "zstr_send"
+      ((ptr void) @-> string @-> returning int)
+  in
+  match send_stub ctx msg with
+  | _ -> () 
 
-let noecho = foreign "zbeacon_noecho"
-  ((ptr Structs._zbeacon_t) @-> returning void)
+let sendm ctx msg = 
+  let stub = foreign "zstr_sendm"
+      ((ptr void) @-> string @-> returning int)
+  in
+  match stub ctx msg with
+  | _ -> ()
 
-let silence = foreign "zbeacon_unsubscribe"
-  ((ptr Structs._zbeacon_t) @-> returning void)
+let sendx socket msg_list =
+  let rec iter = function
+    | []    -> ()
+    | x::[] -> send socket x
+    | x::y  -> sendm socket x;
+      iter y
+  in
+  iter msg_list
 
-(*
-let publish = foreign "zbeacon_publish"
-  ((ptr _zbeacon_t) @-> 
-*)
-let unsubscribe = foreign "zbeacon_unsubscribe"
-  ((ptr Structs._zbeacon_t) @-> returning void)
-
-let socket = foreign "zbeacon_socket"
-  ((ptr Structs._zbeacon_t) @-> returning (ptr void))
+let recvx socket =
+  let rec collect acc = match Socket.rcvmore socket with
+    | false -> acc@[recv socket]
+    | true  -> collect (acc@[recv socket])
+  in
+  collect []

@@ -23,53 +23,55 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *)
 
-open Ctypes
-open PosixTypes
-open Foreign
-open Unsigned
+type t = Frame.t list ref
+
+let create () = ref []
+
+let push msg frame = 
+  msg := !msg@[frame]
+
+let append msg frame =
+  msg := [frame]@(!msg)
+
+let pop msg = match !msg with 
+  | x::y -> let data = Some x in
+    print_endline (Frame.data x);
+    msg := y;
+    data
+  | _ -> print_endline "Poped none"; None
+
+let wrap msg frame =
+  let empty_frame = Frame.create "" in
+  msg := !msg@[empty_frame];
+  msg := !msg@[frame]
+
+(*
+let unwrap
+*)
 
 let recv socket = 
-  let stub = foreign "zstr_recv"
-    ((ptr void) @-> returning string_opt)
-  in
-  match stub socket with
-  | None -> exit 2;
-  | Some x -> x
+  let self = create () in
+  let cond = ref true in
+  while !cond do
+    let frame = Frame.recv socket in
+    match frame with
+    | None -> cond := false
+    | Some x -> append self x
+  done;
+  self
 
-let recv_nowait socket = 
-  let stub = foreign "zstr_recv_nowait"
-    ((ptr void) @-> returning string_opt)
-  in
-  match stub socket with
-  | None -> exit 2;
-  | Some x -> x
-
-let send ctx msg= 
-  let send_stub = foreign "zstr_send"
-    ((ptr void) @-> string @-> returning int)
-  in
-  match send_stub ctx msg with
-  | _ -> () 
-
-let sendm ctx msg = 
-  let stub = foreign "zstr_sendm"
-    ((ptr void) @-> string @-> returning int)
-  in
-  match stub ctx msg with
-  | _ -> ()
-
-let sendx socket msg_list =
-  let rec iter = function
-  | []    -> ()
-  | x::[] -> send socket x
-  | x::y  -> sendm socket x;
-            iter y
-  in
-  iter msg_list
-
-let recvx socket =
-  let rec collect acc = match Socket.rcvmore socket with
-  | false -> acc@[recv socket]
-  | true  -> collect (acc@[recv socket])
-  in
-  collect []
+let send msg socket = 
+  let cond = ref true in
+  while !cond do
+    print_int (List.length (!msg));
+    let frame = pop msg in
+    match frame with
+    | None -> cond := false 
+    | Some x -> begin match List.length !msg with 
+        | 0 -> let rc = Frame.send x socket in ()
+        | _ -> let rc = Frame.send x socket ~flag:Frame.More in ()
+      end
+  done
+(*
+let size = foreign "zmsg_size" (t &->
+*)
