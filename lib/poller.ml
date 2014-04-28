@@ -30,36 +30,25 @@ open Unsigned
 
 exception General_Error of string
 
-type t = Czmq_structs.zpoller_t Ctypes.structure Ctypes.ptr 
+type t = unit ptr
+let zpoller : t typ = ptr void
 
-let create reader_list = 
+let create reader = 
   let stub = foreign "zpoller_new"
-      (ptr void @-> ptr void @-> returning (ptr Czmq_structs._zpoller_t))
+      (ptr void @-> ptr void @-> returning zpoller)
   in
-  let stub2 = foreign "zpoller_new"
-      (ptr void @-> ptr void @-> ptr void @-> returning (ptr Czmq_structs._zpoller_t))
+  stub reader Ctypes.null 
+
+let add reader_list reader =  
+  let stub = foreign "zpoller_add"
+      (zpoller @-> ptr void @-> returning int)
   in
-  let stub3 = foreign "zpoller_new"
-      (ptr void @-> ptr void @-> ptr void @-> ptr void @-> returning (ptr Czmq_structs._zpoller_t))
-  in
-  let stub4 = foreign "zpoller_new"
-      (ptr void @-> ptr void @-> ptr void @-> ptr void @-> ptr void @-> returning (ptr Czmq_structs._zpoller_t))
-  in
-  let stub5 = foreign "zpoller_new"
-      (ptr void @-> ptr void @-> ptr void @-> ptr void @-> ptr void @-> ptr void @-> returning (ptr Czmq_structs._zpoller_t))
-  in
-  match List.length reader_list with 
-  | 1 -> stub (List.nth reader_list 0) Ctypes.null
-  | 2 -> stub2 (List.nth reader_list 0) (List.nth reader_list 1) Ctypes.null
-  | 3 -> stub3 (List.nth reader_list 0) (List.nth reader_list 1) (List.nth reader_list 2) Ctypes.null
-  | 4 -> stub4 (List.nth reader_list 0) (List.nth reader_list 1) (List.nth reader_list 2)
-           (List.nth reader_list 3) Ctypes.null
-  | 5 -> stub5 (List.nth reader_list 0) (List.nth reader_list 1) (List.nth reader_list 2)
-           (List.nth reader_list 3) (List.nth reader_list 4) Ctypes.null
-  | _ -> raise (General_Error "To many readers")
+  match stub reader_list reader with
+  | 0 -> ()
+  | _ -> failwith "Can't create poller"
 
 let wait sockets timeout = 
-  let stub = foreign "zpoller_wait" ((ptr Czmq_structs._zpoller_t) @-> int @-> returning (ptr void))
+  let stub = foreign "zpoller_wait" (zpoller @-> int @-> returning (ptr void))
   in
   match stub sockets timeout with
   | null when null = Ctypes.null -> None
@@ -67,7 +56,7 @@ let wait sockets timeout =
 
 let expired self = 
   let stub = foreign "zpoller_expired"
-      ((ptr Czmq_structs._zpoller_t) @-> returning int)
+      (zpoller @-> returning int)
   in
   match stub self with
   | 0 -> false
@@ -75,7 +64,7 @@ let expired self =
 
 let terminated self = 
   let stub = foreign "zpoller_terminated"
-      ((ptr Czmq_structs._zpoller_t) @-> returning int)
+      (zpoller @-> returning int)
   in
   match stub self with
   | 0 -> false

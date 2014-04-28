@@ -23,55 +23,66 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *)
 
-type t = Frame.t list ref
+open Ctypes
+open PosixTypes
+open Foreign
+open Unsigned
 
-let create () = ref []
+type t = unit ptr
 
-let push msg frame = 
-  msg := !msg@[frame]
+let zmsg : t typ = ptr void
+let zmsg_opt : t option typ = ptr_opt void
 
-let append msg frame =
-  msg := [frame]@(!msg)
+let create = foreign "zmsg_new" (void @-> returning zmsg) 
 
-let pop msg = match !msg with 
-  | x::y -> let data = Some x in
-    print_endline (Frame.data x);
-    msg := y;
-    data
-  | _ -> print_endline "Poped none"; None
-
-let wrap msg frame =
-  let empty_frame = Frame.create "" in
-  msg := !msg@[empty_frame];
-  msg := !msg@[frame]
-
+let destroy = foreign "zmsg_destroy" (ptr zmsg @-> returning void)
 (*
-let unwrap
+let destroy msg : unit = 
+  let fptr = allocate zmsg msg in
+  let stub = foreign "zmsg_destroy" (ptr zmsg @-> returning void) in
+  match stub fptr with
+  | _ -> ()
 *)
+let recv = foreign "zmsg_recv" (ptr void @-> returning zmsg_opt)
 
-let recv socket = 
-  let self = create () in
-  let cond = ref true in
-  while !cond do
-    let frame = Frame.recv socket in
-    match frame with
-    | None -> cond := false
-    | Some x -> append self x
-  done;
-  self
+let recv_nowait = foreign "zmsg_recv_nowait" (ptr void @-> returning zmsg_opt)
 
 let send msg socket = 
-  let cond = ref true in
-  while !cond do
-    print_int (List.length (!msg));
-    let frame = pop msg in
-    match frame with
-    | None -> cond := false 
-    | Some x -> begin match List.length !msg with 
-        | 0 -> let rc = Frame.send x socket in ()
-        | _ -> let rc = Frame.send x socket ~flag:Frame.More in ()
-      end
-  done
-(*
-let size = foreign "zmsg_size" (t &->
-*)
+  let fptr = allocate zmsg msg in
+  let stub = foreign "zmsg_send" (ptr zmsg @-> ptr void @-> returning int) in
+  match stub fptr socket with
+  | _ -> ()
+
+let size msg = 
+  let stub = foreign "zmsg_size" (ptr void @-> returning size_t) in
+  Unsigned.Size_t.to_int (stub msg)
+
+let content_size msg =
+  let stub = foreign "zmsg_content_size" (ptr void @-> returning size_t) in
+  Unsigned.Size_t.to_int (stub msg)
+
+let prepend msg frame = 
+  let fptr = allocate zmsg frame in
+  let stub = foreign "zmsg_prepend" (ptr void @-> ptr (ptr void) @-> returning int) in
+  match stub msg fptr with
+  | _ -> ()
+
+let append msg frame = 
+  let fptr = allocate zmsg frame in
+  let stub = foreign "zmsg_append" (ptr void @-> ptr (ptr void) @-> returning int) in
+  match stub msg fptr with
+  | _ -> ()
+
+let unwrap = foreign "zmsg_unwrap" (zmsg @-> returning (ptr_opt void))
+
+let pushstr msg content = 
+  let stub = foreign "zmsg_pushstr" (zmsg @-> string @-> returning int) in
+  match stub msg content with
+  | _ -> ()
+
+let addstr msg content = 
+  let stub = foreign "zmsg_addstr" (zmsg @-> string @-> returning int) in
+  match stub msg content with
+  | _ -> ()
+
+let dup = foreign "zmsg_dup" (zmsg @-> returning zmsg)

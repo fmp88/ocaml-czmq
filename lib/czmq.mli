@@ -288,7 +288,9 @@ module Poller : sig
 
   type t
 
-  val create : Socket.kind Socket.t list -> t
+  val create : Socket.kind Socket.t -> t
+
+  val add : t -> Socket.kind Socket.t -> unit
 
   val wait : t -> int -> Socket.kind Socket.t option
 
@@ -342,9 +344,11 @@ module Frame : sig
 
   type t 
 
-  type flags = Last | More | Dontwait | More_Dontwait
+  type flags = Last | More | Dontwait | Reuse | More_Dontwait | More_Reuse
 
   val create : string -> t
+
+  val empty : unit -> t
 
   val data : t -> string
 
@@ -352,9 +356,21 @@ module Frame : sig
 
   val recv_nowait : Socket.kind Socket.t -> t option
 
-  val send : t -> Socket.kind Socket.t -> ?flag:flags -> int
+  val send : t -> ?flag:flags -> Socket.kind Socket.t -> int
 
   val strhex : t -> string
+
+  val size : t -> int
+
+  val streq : t -> string -> bool
+
+  val eq : t -> t -> bool
+
+  val more : t -> bool
+
+  val set_more : t -> bool -> unit
+
+  val dup : t -> t
 
 end
 
@@ -364,18 +380,28 @@ module Msg : sig
 
   val create : unit -> t
 
-  val push : t -> Frame.t -> unit 
-
-  val pop : t -> Frame.t option
-
   val append : t -> Frame.t -> unit
 
+  val prepend : t -> Frame.t -> unit
+(*
   val wrap : t -> Frame.t -> unit
+*)
+  val recv : Socket.kind Socket.t -> t option
 
-  val recv : Socket.kind Socket.t -> t
+  val recv_nowait : Socket.kind Socket.t -> t option
 
   val send : t -> Socket.kind Socket.t -> unit
-(*
-  val unwrap : t -> t option
-*)
+
+  val size : t -> int
+
+  val content_size : t -> int
+
+  val unwrap : t -> Frame.t option
+
+  val pushstr : t -> string -> unit
+
+  val addstr : t -> string -> unit
+
+  val dup : t -> t
+
 end
